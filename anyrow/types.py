@@ -11,7 +11,7 @@ class CreateOrganizationsWebhookRequest(TypedDict, total=False):
 class CreateOrganizationsWebhookResponse201(TypedDict, total=False):
     active: bool
     created_at: int
-    events_json: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
+    events: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
     failure_count: int
     id: str
     last_triggered_at: int | None
@@ -27,18 +27,34 @@ class CreateOrganizationsWebhooksTestResponse200(TypedDict, total=False):
     response_body: str | None
     status: Literal["error", "success", "timeout"]
 
+class CreateProjectsExtractRequest(TypedDict, total=False):
+    columns: str
+    file: NotRequired[str]
+    instruction: NotRequired[str]
+    schema: NotRequired[str]
+    strictness: NotRequired[Literal["strict", "balanced", "flexible"]]
+    text: NotRequired[str]
+
 class CreateProjectsExtractResponse200(TypedDict, total=False):
     batch_id: NotRequired[str]
     confidence: float | None
     duration_ms: float | None
     fail_count: float
+    file_type: NotRequired[Literal["text_pdf", "scanned", "image", "text", "document", "unknown"] | None]
     files: list[TypedDict("X", {"confidence": NotRequired[float | None], "error": NotRequired[Any | None], "file_name": NotRequired[Any | None], "rows": NotRequired[float | None], "status": NotRequired[str]})]
     result: NotRequired[CreateProjectsExtractResponse200Result]
     status: str
     success_count: float
+    table_id: str
     total_rows: float
 
 CreateProjectsExtractResponse200Result = NewType("CreateProjectsExtractResponse200Result", Any)  # type: ignore[misc]
+
+CreateProjectsExtractStreamResponse200 = NewType("CreateProjectsExtractStreamResponse200", Any)  # type: ignore[misc]
+
+class CreateProjectsSuggestSchemaRequest(TypedDict, total=False):
+    file: NotRequired[str]
+    text: NotRequired[str]
 
 class CreateProjectsSuggestSchemaResponse200(TypedDict, total=False):
     columns: list[TypedDict("X", {"description": NotRequired[str], "name": str, "type": str})]
@@ -47,7 +63,6 @@ class CreateProjectsSuggestSchemaResponse200(TypedDict, total=False):
 
 class CreateProjectsTableRequest(TypedDict, total=False):
     columns_json: list[TypedDict("X", {"currency_code": NotRequired[str], "default": NotRequired[Any], "description": NotRequired[str | None], "id": str, "instruction": NotRequired[str | None], "name": str, "options": NotRequired[list[str]], "required": NotRequired[bool], "searchable": NotRequired[bool], "type": NotRequired[Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]]})]
-    default_sort: NotRequired[str]
     insert_mode: NotRequired[Literal["append", "dedup", "merge", "replace"]]
     instruction: NotRequired[str | None]
     merge_columns_json: NotRequired[list[str] | None]
@@ -70,7 +85,10 @@ class CreateProjectsTablesDuplicateRequest(TypedDict, total=False):
 class CreateProjectsTablesRestoreRequest(TypedDict, total=False):
     slug: NotRequired[str]
 
-CreateProjectsTablesRowRequest = NewType("CreateProjectsTablesRowRequest", Any)  # type: ignore[misc]
+class CreateProjectsTablesRowRequest(TypedDict, total=False):
+    amount: NotRequired[str]
+    date: NotRequired[str]
+    vendor: NotRequired[str]
 
 class CreateProjectsTablesRowRequest_dbbb57(TypedDict, total=False):
     creates: NotRequired[list[dict[str, Any]]]
@@ -81,6 +99,8 @@ class CreateProjectsTablesRowResponse200(TypedDict, total=False):
     created: NotRequired[list[dict[str, Any]]]
     deleted: NotRequired[list[str]]
     updated: NotRequired[list[dict[str, Any]]]
+
+CreateProjectsTablesRowResponse201 = NewType("CreateProjectsTablesRowResponse201", Any)  # type: ignore[misc]
 
 class CreateProjectsTableTemplatesUseRequest(TypedDict, total=False):
     name: str
@@ -143,6 +163,86 @@ class Err403EmailNotVerifiedForbidden(TypedDict, total=False):
     status_key: str
     success: Literal[False]
 
+class Err403EmailNotVerifiedForbiddenTableTemplateForbidden(TypedDict, total=False):
+    error_key: Literal["email_not_verified", "forbidden", "table_template_forbidden"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[403]
+    status_key: str
+    success: Literal[False]
+
+class Err404BatchNotFound(TypedDict, total=False):
+    error_key: Literal["batch_not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
+class Err404ColumnNotFoundTableNotFound(TypedDict, total=False):
+    error_key: Literal["column_not_found", "table_not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
+class Err404NotFound(TypedDict, total=False):
+    error_key: Literal["not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
+class Err404NotFoundTableTemplateNotFound(TypedDict, total=False):
+    error_key: Literal["not_found", "table_template_not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
+class Err404NotFoundWebhookNotFound(TypedDict, total=False):
+    error_key: Literal["not_found", "webhook_not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
+class Err404RowNotFoundTableNotFound(TypedDict, total=False):
+    error_key: Literal["row_not_found", "table_not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
+class Err404TableNotFound(TypedDict, total=False):
+    error_key: Literal["table_not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
+class Err408RequestTimeout(TypedDict, total=False):
+    error_key: Literal["request_timeout"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[408]
+    status_key: str
+    success: Literal[False]
+
+class Err409OptimisticLockConflict(TypedDict, total=False):
+    error_key: Literal["optimistic_lock_conflict"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[409]
+    status_key: str
+    success: Literal[False]
+
 class Err413ContentTooLarge(TypedDict, total=False):
     error_key: Literal["content_too_large"]
     fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
@@ -159,6 +259,22 @@ class Err415UnsupportedMediaType(TypedDict, total=False):
     status_key: str
     success: Literal[False]
 
+class Err422UnprocessableEntity(TypedDict, total=False):
+    error_key: Literal["unprocessable_entity"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[422]
+    status_key: str
+    success: Literal[False]
+
+class Err429TooManyRequests(TypedDict, total=False):
+    error_key: Literal["too_many_requests"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[429]
+    status_key: str
+    success: Literal[False]
+
 class Err500InternalServerError(TypedDict, total=False):
     error_key: Literal["internal_server_error"]
     fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
@@ -167,10 +283,34 @@ class Err500InternalServerError(TypedDict, total=False):
     status_key: str
     success: Literal[False]
 
+class Err502BadGateway(TypedDict, total=False):
+    error_key: Literal["bad_gateway"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[502]
+    status_key: str
+    success: Literal[False]
+
+class Err503ServiceUnavailable(TypedDict, total=False):
+    error_key: Literal["service_unavailable"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[503]
+    status_key: str
+    success: Literal[False]
+
+class Err504GatewayTimeout(TypedDict, total=False):
+    error_key: Literal["gateway_timeout"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[504]
+    status_key: str
+    success: Literal[False]
+
 class GetOrganizationsWebhookResponse200(TypedDict, total=False):
     active: bool
     created_at: int
-    events_json: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
+    events: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
     failure_count: int
     id: str
     last_triggered_at: int | None
@@ -220,6 +360,14 @@ class GetProjectsExportResponse200(TypedDict, total=False):
     updated_at: int
     xlsx_key: str | None
 
+class GetProjectsExportResponse404(TypedDict, total=False):
+    error_key: Literal["export_not_found"]
+    fields: dict[str, list[TypedDict("X", {"error_key": str, "message": str, "path": str})]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+
 class GetProjectsTableTemplateResponse200(TypedDict, total=False):
     category: str
     columns_json: list[TypedDict("X", {"currency_code": NotRequired[str], "default": NotRequired[Any], "description": NotRequired[str | None], "id": str, "instruction": NotRequired[str | None], "name": str, "options": NotRequired[list[str]], "required": bool, "searchable": NotRequired[bool], "type": Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]})]
@@ -250,7 +398,7 @@ class ListOrganizationsWebhooksResponse200(TypedDict, total=False):
     limit: int
     nextCursor: str | None
     page: int | None
-    webhooks: list[TypedDict("X", {"active": bool, "created_at": int, "events_json": list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]], "failure_count": int, "id": str, "last_triggered_at": int | None, "name": str | None, "organization_id": str, "secret_rotated_at": int | None, "updated_at": int, "url": str})]
+    webhooks: list[TypedDict("X", {"active": bool, "created_at": int, "events": list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]], "failure_count": int, "id": str, "last_triggered_at": int | None, "name": str | None, "organization_id": str, "secret_rotated_at": int | None, "updated_at": int, "url": str})]
 
 class ListProjectsBatchesResponse200(TypedDict, total=False):
     batches: list[TypedDict("X", {"actor_id": str, "actor_type": Literal["user", "api_key"], "confidence": float | None, "created_at": int, "csv_key": str | None, "current_file": str | None, "duration_ms": int | None, "error": str | None, "file_count": int, "files_done": int, "id": str, "insert_mode": Literal["append", "dedup", "merge", "replace"] | None, "json_key": str | None, "project_id": str, "schema_json": TypedDict("X", {"columns": list[TypedDict("X", {"description": NotRequired[str | None], "instruction": NotRequired[str | None], "name": str, "type": Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]})], "instruction": NotRequired[str | None], "strictness": Literal["strict", "balanced", "flexible"]}), "status": Literal["uploading", "processing", "merging", "complete", "partial", "failed"], "table_id": str | None, "total_rows": int | None, "updated_at": int, "xlsx_key": str | None})]
@@ -262,6 +410,10 @@ class ListProjectsBatchesResponse200(TypedDict, total=False):
 
 class ListProjectsTablesColumnsDistinctResponse200(TypedDict, total=False):
     values: list[str | float | None]
+
+class ListProjectsTablesExportResponse200(TypedDict, total=False):
+    id: str
+    status: Literal["processing"]
 
 class ListProjectsTablesResponse200(TypedDict, total=False):
     count: int
@@ -326,4 +478,4 @@ class UpdateTableTemplateRequest(TypedDict, total=False):
     name: NotRequired[str]
     strictness: NotRequired[Literal["strict", "balanced", "flexible"]]
 
-__all__ = ["CreateOrganizationsWebhookRequest", "CreateOrganizationsWebhookResponse201", "CreateOrganizationsWebhooksTestResponse200", "CreateProjectsExtractResponse200", "CreateProjectsExtractResponse200Result", "CreateProjectsSuggestSchemaResponse200", "CreateProjectsTableRequest", "CreateProjectsTablesColumnRequest", "CreateProjectsTablesDuplicateRequest", "CreateProjectsTablesRestoreRequest", "CreateProjectsTablesRowRequest", "CreateProjectsTablesRowRequest_dbbb57", "CreateProjectsTablesRowResponse200", "CreateProjectsTableTemplatesUseRequest", "CreateProjectsTableTemplatesUseResponse201", "CreateTableTemplateRequest", "DeleteOrganizationsWebhookResponse200", "Err400InvalidInput", "Err401Unauthorized", "Err403EmailNotVerifiedForbidden", "Err413ContentTooLarge", "Err415UnsupportedMediaType", "Err500InternalServerError", "GetOrganizationsWebhookResponse200", "GetProjectsBatcheResponse200", "GetProjectsExportResponse200", "GetProjectsTableTemplateResponse200", "ListOrganizationsWebhooksDeliveriesResponse200", "ListOrganizationsWebhooksResponse200", "ListProjectsBatchesResponse200", "ListProjectsTablesColumnsDistinctResponse200", "ListProjectsTablesResponse200", "ListProjectsTablesRowsResponse200", "ListProjectsTablesRowsResponse200_f7f633", "ListProjectsTableTemplatesResponse200", "ReplaceProjectsTablesColumnRequest", "UpdateOrganizationsWebhookRequest", "UpdateProjectsTableRequest", "UpdateProjectsTablesColumnRequest", "UpdateTableTemplateRequest"]
+__all__ = ["CreateOrganizationsWebhookRequest", "CreateOrganizationsWebhookResponse201", "CreateOrganizationsWebhooksTestResponse200", "CreateProjectsExtractRequest", "CreateProjectsExtractResponse200", "CreateProjectsExtractResponse200Result", "CreateProjectsExtractStreamResponse200", "CreateProjectsSuggestSchemaRequest", "CreateProjectsSuggestSchemaResponse200", "CreateProjectsTableRequest", "CreateProjectsTablesColumnRequest", "CreateProjectsTablesDuplicateRequest", "CreateProjectsTablesRestoreRequest", "CreateProjectsTablesRowRequest", "CreateProjectsTablesRowRequest_dbbb57", "CreateProjectsTablesRowResponse200", "CreateProjectsTablesRowResponse201", "CreateProjectsTableTemplatesUseRequest", "CreateProjectsTableTemplatesUseResponse201", "CreateTableTemplateRequest", "DeleteOrganizationsWebhookResponse200", "Err400InvalidInput", "Err401Unauthorized", "Err403EmailNotVerifiedForbidden", "Err403EmailNotVerifiedForbiddenTableTemplateForbidden", "Err404BatchNotFound", "Err404ColumnNotFoundTableNotFound", "Err404NotFound", "Err404NotFoundTableTemplateNotFound", "Err404NotFoundWebhookNotFound", "Err404RowNotFoundTableNotFound", "Err404TableNotFound", "Err408RequestTimeout", "Err409OptimisticLockConflict", "Err413ContentTooLarge", "Err415UnsupportedMediaType", "Err422UnprocessableEntity", "Err429TooManyRequests", "Err500InternalServerError", "Err502BadGateway", "Err503ServiceUnavailable", "Err504GatewayTimeout", "GetOrganizationsWebhookResponse200", "GetProjectsBatcheResponse200", "GetProjectsExportResponse200", "GetProjectsExportResponse404", "GetProjectsTableTemplateResponse200", "ListOrganizationsWebhooksDeliveriesResponse200", "ListOrganizationsWebhooksResponse200", "ListProjectsBatchesResponse200", "ListProjectsTablesColumnsDistinctResponse200", "ListProjectsTablesExportResponse200", "ListProjectsTablesResponse200", "ListProjectsTablesRowsResponse200", "ListProjectsTablesRowsResponse200_f7f633", "ListProjectsTableTemplatesResponse200", "ReplaceProjectsTablesColumnRequest", "UpdateOrganizationsWebhookRequest", "UpdateProjectsTableRequest", "UpdateProjectsTablesColumnRequest", "UpdateTableTemplateRequest"]

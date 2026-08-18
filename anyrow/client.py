@@ -4,7 +4,7 @@ from __future__ import annotations
 import threading
 import httpx
 from urllib.parse import quote
-from typing import Any, Literal
+from typing import Any, AsyncIterator, Literal
 from ._runtime import (
     ClientConfig,
     _build_headers,
@@ -15,6 +15,7 @@ from ._runtime import (
     _raise_for_status,
 )
 from ._invalidation import _StaleTracker, _StaleTrackerSync, interpolate_path
+from ._sse import SSEEvent, parse_sse_stream
 from .types import (
     CreateOrganizationsWebhookRequest,
     CreateOrganizationsWebhookResponse201,
@@ -41,9 +42,11 @@ from .types import (
     UpdateProjectsTablesColumnRequest,
     ListProjectsTablesColumnsDistinctResponse200,
     CreateProjectsTablesDuplicateRequest,
+    ListProjectsTablesExportResponse200,
     CreateProjectsTablesRestoreRequest,
     ListProjectsTablesRowsResponse200,
     CreateProjectsTablesRowRequest,
+    CreateProjectsTablesRowResponse201,
     ListProjectsTablesRowsResponse200_f7f633,
     CreateProjectsTablesRowRequest_dbbb57,
     CreateProjectsTablesRowResponse200,
@@ -70,9 +73,16 @@ class _BatchDownloadResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}/download/csv")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -113,9 +123,16 @@ class _BatchDownloadResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}/download/json")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -156,9 +173,16 @@ class _BatchDownloadResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}/download/xlsx")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -205,9 +229,16 @@ class _BatchResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -244,7 +275,6 @@ class _BatchResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         status: Literal["uploading", "processing", "merging", "complete", "partial", "failed"] | None = None,
         timeout: float | None = None,
@@ -257,13 +287,19 @@ class _BatchResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit, "status": status}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit, "status": status}
         _path_params: dict[str, str] | None = {"project_id": project_id}
         _concrete_path = interpolate_path("/v1/projects/{project_id}/batches", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -305,9 +341,17 @@ class _ColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -350,9 +394,16 @@ class _ColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/{quote(col_id, safe='')}/distinct")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -393,9 +444,17 @@ class _ColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/{quote(col_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -436,9 +495,17 @@ class _ColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/order")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -479,9 +546,17 @@ class _ColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/{quote(col_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -527,9 +602,16 @@ class _ExportResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/exports/{quote(export_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -575,9 +657,16 @@ class _ExtractTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/extract")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -608,46 +697,36 @@ class _ExtractTableResource:
 
     async def stream(self, project_id: str, table_id: str,
         *,
-        timeout: float | None = None,
-        headers: dict[str, str] | None = None,
-        cancel_token: "threading.Event | None" = None
-    ) -> None:
+        last_event_id: str | None = None
+    ) -> AsyncIterator[SSEEvent]:
         """Extract into table (SSE stream)
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/extract-stream")
-        _headers = _build_headers(self._client._config, extra=headers)
+        _headers = _build_headers(self._client._config, extra={"Accept": "text/event-stream"})
+        if last_event_id is not None: _headers["Last-Event-ID"] = last_event_id
         _params: dict[str, Any] = {}
-        _path_params: dict[str, str] | None = {"project_id": project_id, "table_id": table_id}
-        _concrete_path = interpolate_path("/v1/projects/{project_id}/tables/{table_id}/extract-stream", _path_params)
-        _concrete_selector = "POST " + _concrete_path
-        _request_meta = await self._client._stale_tracker.build_request_meta(
-            _concrete_selector, _concrete_path, "POST",
-        )
-        _response = await _do_request_async(
-            self._client._async_client, self._client._config, "POST", url,
-            headers=_headers, json=None, params=_params, timeout=timeout,
-            cancel_token=cancel_token, operation="POST /v1/projects/{project_id}/tables/{table_id}/extract-stream",
-            request_meta=_request_meta,
-        )
-        if _response.status_code < 400:
-            await self._client._stale_tracker.mark_stale(
-                [], _path_params, _concrete_selector,
-            )
-            if _request_meta is not None and _request_meta.is_stale:
-                await self._client._stale_tracker.clear_stale(
-                    _concrete_selector, _concrete_path, "POST",
-                    _request_meta.seq_snapshot,
-                )
-        _raise_for_status(_response)
-        return _parse_body(_response)
+        async with self._client._async_client.stream(
+            "POST", url, headers=_headers,
+            params={k: v for k, v in _params.items() if v is not None} or None,
+        ) as _response:
+            _raise_for_status(_response)
+            async for _event in parse_sse_stream(_response):
+                yield _event
 
 
 class _ExtractResource:
@@ -667,9 +746,15 @@ class _ExtractResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/extract")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -700,46 +785,35 @@ class _ExtractResource:
 
     async def stream(self, project_id: str,
         *,
-        timeout: float | None = None,
-        headers: dict[str, str] | None = None,
-        cancel_token: "threading.Event | None" = None
-    ) -> None:
+        last_event_id: str | None = None
+    ) -> AsyncIterator[SSEEvent]:
         """Extract data from text or file (SSE stream)
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/extract-stream")
-        _headers = _build_headers(self._client._config, extra=headers)
+        _headers = _build_headers(self._client._config, extra={"Accept": "text/event-stream"})
+        if last_event_id is not None: _headers["Last-Event-ID"] = last_event_id
         _params: dict[str, Any] = {}
-        _path_params: dict[str, str] | None = {"project_id": project_id}
-        _concrete_path = interpolate_path("/v1/projects/{project_id}/extract-stream", _path_params)
-        _concrete_selector = "POST " + _concrete_path
-        _request_meta = await self._client._stale_tracker.build_request_meta(
-            _concrete_selector, _concrete_path, "POST",
-        )
-        _response = await _do_request_async(
-            self._client._async_client, self._client._config, "POST", url,
-            headers=_headers, json=None, params=_params, timeout=timeout,
-            cancel_token=cancel_token, operation="POST /v1/projects/{project_id}/extract-stream",
-            request_meta=_request_meta,
-        )
-        if _response.status_code < 400:
-            await self._client._stale_tracker.mark_stale(
-                [], _path_params, _concrete_selector,
-            )
-            if _request_meta is not None and _request_meta.is_stale:
-                await self._client._stale_tracker.clear_stale(
-                    _concrete_selector, _concrete_path, "POST",
-                    _request_meta.seq_snapshot,
-                )
-        _raise_for_status(_response)
-        return _parse_body(_response)
+        async with self._client._async_client.stream(
+            "POST", url, headers=_headers,
+            params={k: v for k, v in _params.items() if v is not None} or None,
+        ) as _response:
+            _raise_for_status(_response)
+            async for _event in parse_sse_stream(_response):
+                yield _event
 
 
 class _RowResource:
@@ -759,9 +833,16 @@ class _RowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/aggregate")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -802,9 +883,16 @@ class _RowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/bulk")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -838,16 +926,23 @@ class _RowResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> CreateProjectsTablesRowRequest:
+    ) -> CreateProjectsTablesRowResponse201:
         """Create row
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -888,9 +983,16 @@ class _RowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/{quote(row_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -924,16 +1026,23 @@ class _RowResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> CreateProjectsTablesRowRequest:
+    ) -> CreateProjectsTablesRowResponse201:
         """Get row
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/{quote(row_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -980,9 +1089,16 @@ class _RowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1016,16 +1132,23 @@ class _RowResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> CreateProjectsTablesRowRequest:
+    ) -> CreateProjectsTablesRowResponse201:
         """Update row
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/{quote(row_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1071,9 +1194,15 @@ class _SuggestResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/suggest-schema")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1119,9 +1248,15 @@ class _TableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1162,9 +1297,16 @@ class _TableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1205,9 +1347,16 @@ class _TableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/duplicate")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1246,16 +1395,23 @@ class _TableResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> GetProjectsExportResponse200:
+    ) -> ListProjectsTablesExportResponse200:
         """Export table rows
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/export")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1296,9 +1452,16 @@ class _TableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1335,7 +1498,6 @@ class _TableResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
@@ -1347,13 +1509,19 @@ class _TableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit}
         _path_params: dict[str, str] | None = {"project_id": project_id}
         _concrete_path = interpolate_path("/v1/projects/{project_id}/tables", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -1390,9 +1558,16 @@ class _TableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/restore")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1433,9 +1608,16 @@ class _TableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1481,9 +1663,16 @@ class _TableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, "/v1/table-templates")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1524,9 +1713,16 @@ class _TableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/table-templates/{quote(template_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1575,9 +1771,16 @@ class _TableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, "/v1/table-templates/mine")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1618,9 +1821,16 @@ class _TableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/table-templates/{quote(template_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1657,7 +1867,6 @@ class _TableTemplateResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
@@ -1669,13 +1878,19 @@ class _TableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/table-templates")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit}
         _path_params: dict[str, str] | None = {"project_id": project_id}
         _concrete_path = interpolate_path("/v1/projects/{project_id}/table-templates", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -1712,9 +1927,16 @@ class _TableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/table-templates/{quote(template_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1755,9 +1977,16 @@ class _TableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/table-templates/{quote(template_id, safe='')}/use")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1803,9 +2032,16 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1846,9 +2082,16 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1885,7 +2128,6 @@ class _WebhookResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"] | None = None,
         status: Literal["pending", "success", "failed"] | None = None,
@@ -1899,13 +2141,20 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}/deliveries")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit, "event": event, "status": status}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit, "event": event, "status": status}
         _path_params: dict[str, str] | None = {"organization_id": organization_id, "id": id}
         _concrete_path = interpolate_path("/v1/organizations/{organization_id}/webhooks/{id}/deliveries", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -1942,9 +2191,16 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -1981,7 +2237,6 @@ class _WebhookResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
@@ -1993,13 +2248,20 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit}
         _path_params: dict[str, str] | None = {"organization_id": organization_id}
         _concrete_path = interpolate_path("/v1/organizations/{organization_id}/webhooks", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -2036,9 +2298,16 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}/rotate-secret")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2079,9 +2348,16 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}/test")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2122,9 +2398,16 @@ class _WebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2170,9 +2453,16 @@ class _SyncBatchDownloadResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}/download/csv")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2213,9 +2503,16 @@ class _SyncBatchDownloadResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}/download/json")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2256,9 +2553,16 @@ class _SyncBatchDownloadResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}/download/xlsx")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2305,9 +2609,16 @@ class _SyncBatchResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches/{quote(batch_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2344,7 +2655,6 @@ class _SyncBatchResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         status: Literal["uploading", "processing", "merging", "complete", "partial", "failed"] | None = None,
         timeout: float | None = None,
@@ -2357,13 +2667,19 @@ class _SyncBatchResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/batches")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit, "status": status}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit, "status": status}
         _path_params: dict[str, str] | None = {"project_id": project_id}
         _concrete_path = interpolate_path("/v1/projects/{project_id}/batches", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -2405,9 +2721,17 @@ class _SyncColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2450,9 +2774,16 @@ class _SyncColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/{quote(col_id, safe='')}/distinct")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2493,9 +2824,17 @@ class _SyncColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/{quote(col_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2536,9 +2875,17 @@ class _SyncColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/order")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2579,9 +2926,17 @@ class _SyncColumnResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            ConflictError: HTTP 409
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/columns/{quote(col_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2627,9 +2982,16 @@ class _SyncExportResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/exports/{quote(export_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2675,9 +3037,16 @@ class _SyncExtractTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/extract")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2692,49 +3061,6 @@ class _SyncExtractTableResource:
             self._client._sync_client, self._client._config, "POST", url,
             headers=_headers, json=None, params=_params, timeout=timeout,
             cancel_token=cancel_token, operation="POST /v1/projects/{project_id}/tables/{table_id}/extract",
-            request_meta=_request_meta,
-        )
-        if _response.status_code < 400:
-            self._client._stale_tracker.mark_stale(
-                [], _path_params, _concrete_selector,
-            )
-            if _request_meta is not None and _request_meta.is_stale:
-                self._client._stale_tracker.clear_stale(
-                    _concrete_selector, _concrete_path, "POST",
-                    _request_meta.seq_snapshot,
-                )
-        _raise_for_status(_response)
-        return _parse_body(_response)
-
-    def stream(self, project_id: str, table_id: str,
-        *,
-        timeout: float | None = None,
-        headers: dict[str, str] | None = None,
-        cancel_token: "threading.Event | None" = None
-    ) -> None:
-        """Extract into table (SSE stream)
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            ForbiddenError: HTTP 403
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            InternalServerError: HTTP 500
-        """
-        url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/extract-stream")
-        _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {}
-        _path_params: dict[str, str] | None = {"project_id": project_id, "table_id": table_id}
-        _concrete_path = interpolate_path("/v1/projects/{project_id}/tables/{table_id}/extract-stream", _path_params)
-        _concrete_selector = "POST " + _concrete_path
-        _request_meta = self._client._stale_tracker.build_request_meta(
-            _concrete_selector, _concrete_path, "POST",
-        )
-        _response = _do_request_sync(
-            self._client._sync_client, self._client._config, "POST", url,
-            headers=_headers, json=None, params=_params, timeout=timeout,
-            cancel_token=cancel_token, operation="POST /v1/projects/{project_id}/tables/{table_id}/extract-stream",
             request_meta=_request_meta,
         )
         if _response.status_code < 400:
@@ -2767,9 +3093,15 @@ class _SyncExtractResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/extract")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2784,49 +3116,6 @@ class _SyncExtractResource:
             self._client._sync_client, self._client._config, "POST", url,
             headers=_headers, json=None, params=_params, timeout=timeout,
             cancel_token=cancel_token, operation="POST /v1/projects/{project_id}/extract",
-            request_meta=_request_meta,
-        )
-        if _response.status_code < 400:
-            self._client._stale_tracker.mark_stale(
-                [], _path_params, _concrete_selector,
-            )
-            if _request_meta is not None and _request_meta.is_stale:
-                self._client._stale_tracker.clear_stale(
-                    _concrete_selector, _concrete_path, "POST",
-                    _request_meta.seq_snapshot,
-                )
-        _raise_for_status(_response)
-        return _parse_body(_response)
-
-    def stream(self, project_id: str,
-        *,
-        timeout: float | None = None,
-        headers: dict[str, str] | None = None,
-        cancel_token: "threading.Event | None" = None
-    ) -> None:
-        """Extract data from text or file (SSE stream)
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            ForbiddenError: HTTP 403
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            InternalServerError: HTTP 500
-        """
-        url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/extract-stream")
-        _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {}
-        _path_params: dict[str, str] | None = {"project_id": project_id}
-        _concrete_path = interpolate_path("/v1/projects/{project_id}/extract-stream", _path_params)
-        _concrete_selector = "POST " + _concrete_path
-        _request_meta = self._client._stale_tracker.build_request_meta(
-            _concrete_selector, _concrete_path, "POST",
-        )
-        _response = _do_request_sync(
-            self._client._sync_client, self._client._config, "POST", url,
-            headers=_headers, json=None, params=_params, timeout=timeout,
-            cancel_token=cancel_token, operation="POST /v1/projects/{project_id}/extract-stream",
             request_meta=_request_meta,
         )
         if _response.status_code < 400:
@@ -2859,9 +3148,16 @@ class _SyncRowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/aggregate")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2902,9 +3198,16 @@ class _SyncRowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/bulk")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2938,16 +3241,23 @@ class _SyncRowResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> CreateProjectsTablesRowRequest:
+    ) -> CreateProjectsTablesRowResponse201:
         """Create row
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -2988,9 +3298,16 @@ class _SyncRowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/{quote(row_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3024,16 +3341,23 @@ class _SyncRowResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> CreateProjectsTablesRowRequest:
+    ) -> CreateProjectsTablesRowResponse201:
         """Get row
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/{quote(row_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3080,9 +3404,16 @@ class _SyncRowResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3116,16 +3447,23 @@ class _SyncRowResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> CreateProjectsTablesRowRequest:
+    ) -> CreateProjectsTablesRowResponse201:
         """Update row
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/rows/{quote(row_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3171,9 +3509,15 @@ class _SyncSuggestResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/suggest-schema")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3219,9 +3563,15 @@ class _SyncTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3262,9 +3612,16 @@ class _SyncTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3305,9 +3662,16 @@ class _SyncTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/duplicate")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3346,16 +3710,23 @@ class _SyncTableResource:
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
         cancel_token: "threading.Event | None" = None
-    ) -> GetProjectsExportResponse200:
+    ) -> ListProjectsTablesExportResponse200:
         """Export table rows
 
         Raises:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/export")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3396,9 +3767,16 @@ class _SyncTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3435,7 +3813,6 @@ class _SyncTableResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
@@ -3447,13 +3824,19 @@ class _SyncTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit}
         _path_params: dict[str, str] | None = {"project_id": project_id}
         _concrete_path = interpolate_path("/v1/projects/{project_id}/tables", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -3490,9 +3873,16 @@ class _SyncTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}/restore")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3533,9 +3923,16 @@ class _SyncTableResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/tables/{quote(table_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3581,9 +3978,16 @@ class _SyncTableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, "/v1/table-templates")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3624,9 +4028,16 @@ class _SyncTableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/table-templates/{quote(template_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3675,9 +4086,16 @@ class _SyncTableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, "/v1/table-templates/mine")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3718,9 +4136,16 @@ class _SyncTableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/table-templates/{quote(template_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3757,7 +4182,6 @@ class _SyncTableTemplateResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
@@ -3769,13 +4193,19 @@ class _SyncTableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/table-templates")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit}
         _path_params: dict[str, str] | None = {"project_id": project_id}
         _concrete_path = interpolate_path("/v1/projects/{project_id}/table-templates", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -3812,9 +4242,16 @@ class _SyncTableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/table-templates/{quote(template_id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3855,9 +4292,16 @@ class _SyncTableTemplateResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/projects/{quote(project_id, safe='')}/table-templates/{quote(template_id, safe='')}/use")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3903,9 +4347,16 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3946,9 +4397,16 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -3985,7 +4443,6 @@ class _SyncWebhookResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"] | None = None,
         status: Literal["pending", "success", "failed"] | None = None,
@@ -3999,13 +4456,20 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}/deliveries")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit, "event": event, "status": status}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit, "event": event, "status": status}
         _path_params: dict[str, str] | None = {"organization_id": organization_id, "id": id}
         _concrete_path = interpolate_path("/v1/organizations/{organization_id}/webhooks/{id}/deliveries", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -4042,9 +4506,16 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -4081,7 +4552,6 @@ class _SyncWebhookResource:
         order: str | None = None,
         page: int | None = None,
         q: str | None = None,
-        select: str | None = None,
         limit: int | None = None,
         timeout: float | None = None,
         headers: dict[str, str] | None = None,
@@ -4093,13 +4563,20 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks")
         _headers = _build_headers(self._client._config, extra=headers)
-        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "select": select, "limit": limit}
+        _params: dict[str, Any] = {"cursor": cursor, "filter": filter, "lang": lang, "order": order, "page": page, "q": q, "limit": limit}
         _path_params: dict[str, str] | None = {"organization_id": organization_id}
         _concrete_path = interpolate_path("/v1/organizations/{organization_id}/webhooks", _path_params)
         _concrete_selector = "GET " + _concrete_path
@@ -4136,9 +4613,16 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}/rotate-secret")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -4179,9 +4663,16 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}/test")
         _headers = _build_headers(self._client._config, extra=headers)
@@ -4222,9 +4713,16 @@ class _SyncWebhookResource:
             BadRequestError: HTTP 400
             UnauthorizedError: HTTP 401
             ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
             APIStatusError: HTTP 413
             APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
             InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
         """
         url = _build_url(self._client._config.base_url, f"/v1/organizations/{quote(organization_id, safe='')}/webhooks/{quote(id, safe='')}")
         _headers = _build_headers(self._client._config, extra=headers)
