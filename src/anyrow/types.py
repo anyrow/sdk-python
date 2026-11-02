@@ -31,7 +31,9 @@ class CreateOrganizationsWebhookResponse201(TypedDict):
 
 
 class CreateOrganizationsWebhookResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "webhook_create_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "webhook_create_failed"
+    ]
     fields: dict[str, list[CreateOrganizationsWebhookResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -47,7 +49,9 @@ class CreateOrganizationsWebhooksTestResponse200(TypedDict):
 
 
 class CreateOrganizationsWebhooksTestResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "webhook_test_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "webhook_test_failed"
+    ]
     fields: dict[str, list[CreateOrganizationsWebhooksTestResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -71,7 +75,9 @@ class CreateProjectsExtractResponse200(TypedDict):
     credits: int
     duration_ms: float | None
     fail_count: float
-    file_type: NotRequired[Literal["text_pdf", "scanned", "image", "text", "document", "unknown"] | None]
+    file_type: NotRequired[
+        Literal["text_pdf", "scanned", "image", "text", "document", "unknown"] | None
+    ]
     files: list[CreateProjectsExtractResponse200FilesItem]
     result: NotRequired[dict[str, Any]]
     status: str
@@ -101,7 +107,12 @@ class CreateProjectsTableRequest(TypedDict):
 
 
 class CreateProjectsTableResponse402(TypedDict):
-    error_key: Literal["api_request_limit_exceeded", "column_limit_reached", "feature_not_available", "table_plan_limit"]
+    error_key: Literal[
+        "api_request_limit_exceeded",
+        "column_limit_reached",
+        "feature_not_available",
+        "table_plan_limit",
+    ]
     fields: dict[str, list[CreateProjectsTableResponse402FieldsValueItem]]
     message: str
     status: Literal[402]
@@ -137,7 +148,9 @@ class CreateProjectsTableTemplatesUseResponse201(TypedDict):
 
 
 class CreateProjectsTableTemplatesUseResponse402(TypedDict):
-    error_key: Literal["api_request_limit_exceeded", "feature_not_available", "table_plan_limit"]
+    error_key: Literal[
+        "api_request_limit_exceeded", "feature_not_available", "table_plan_limit"
+    ]
     fields: dict[str, list[CreateProjectsTableTemplatesUseResponse402FieldsValueItem]]
     message: str
     status: Literal[402]
@@ -153,11 +166,27 @@ class CreateProjectsTablesColumnRequest(TypedDict):
     name: str
     options: NotRequired[list[str]]
     required: NotRequired[bool]
-    type: NotRequired[Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]]
+    type: NotRequired[
+        Literal[
+            "array",
+            "boolean",
+            "currency",
+            "date",
+            "email",
+            "enum",
+            "multi_select",
+            "number",
+            "string",
+            "text",
+            "url",
+        ]
+    ]
 
 
 class CreateProjectsTablesColumnResponse402(TypedDict):
-    error_key: Literal["api_request_limit_exceeded", "column_limit_reached", "feature_not_available"]
+    error_key: Literal[
+        "api_request_limit_exceeded", "column_limit_reached", "feature_not_available"
+    ]
     fields: dict[str, list[CreateProjectsTablesColumnResponse402FieldsValueItem]]
     message: str
     status: Literal[402]
@@ -167,7 +196,9 @@ class CreateProjectsTablesColumnResponse402(TypedDict):
 
 
 class CreateProjectsTablesColumnResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "column_add_failed", "internal_server_error"]
+    error_key: Literal[
+        "captcha_unavailable", "column_add_failed", "internal_server_error"
+    ]
     fields: dict[str, list[CreateProjectsTablesColumnResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -182,7 +213,9 @@ class CreateProjectsTablesDuplicateRequest(TypedDict):
 
 
 class CreateProjectsTablesDuplicateResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "table_duplicate_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "table_duplicate_failed"
+    ]
     fields: dict[str, list[CreateProjectsTablesDuplicateResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -206,7 +239,9 @@ class CreateProjectsTablesRestoreResponse410(TypedDict):
 
 
 class CreateProjectsTablesRestoreResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "table_restore_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "table_restore_failed"
+    ]
     fields: dict[str, list[CreateProjectsTablesRestoreResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -231,7 +266,9 @@ class CreateProjectsTablesRowResponse200(TypedDict):
 
 
 class CreateProjectsTablesRowResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "row_create_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "row_create_failed"
+    ]
     fields: dict[str, list[CreateProjectsTablesRowResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -241,7 +278,9 @@ class CreateProjectsTablesRowResponse500(TypedDict):
 
 
 class CreateProjectsTablesRowResponse500534f56(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "row_bulk_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "row_bulk_failed"
+    ]
     fields: dict[str, list[CreateProjectsTablesRowResponse500534f56FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -262,7 +301,9 @@ class CreateTableTemplateRequest(TypedDict):
 
 
 class CreateTableTemplateResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "table_template_create_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "table_template_create_failed"
+    ]
     fields: dict[str, list[CreateTableTemplateResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -276,7 +317,9 @@ class DeleteOrganizationsWebhookResponse200(TypedDict):
 
 
 class DeleteProjectsTablesColumnResponse400(TypedDict):
-    error_key: Literal["captcha_failed", "captcha_required", "column_minimum_required", "invalid_input"]
+    error_key: Literal[
+        "captcha_failed", "captcha_required", "column_minimum_required", "invalid_input"
+    ]
     fields: dict[str, list[DeleteProjectsTablesColumnResponse400FieldsValueItem]]
     message: str
     status: Literal[400]
@@ -296,7 +339,9 @@ class DeleteProjectsTablesColumnResponse409(TypedDict):
 
 
 class DeleteProjectsTablesColumnResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "column_remove_failed", "internal_server_error"]
+    error_key: Literal[
+        "captcha_unavailable", "column_remove_failed", "internal_server_error"
+    ]
     fields: dict[str, list[DeleteProjectsTablesColumnResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -306,7 +351,9 @@ class DeleteProjectsTablesColumnResponse500(TypedDict):
 
 
 class DeleteProjectsTablesRowResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "row_delete_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "row_delete_failed"
+    ]
     fields: dict[str, list[DeleteProjectsTablesRowResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -316,7 +363,9 @@ class DeleteProjectsTablesRowResponse500(TypedDict):
 
 
 class DeleteTableTemplateResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "table_template_delete_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "table_template_delete_failed"
+    ]
     fields: dict[str, list[DeleteTableTemplateResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -326,8 +375,15 @@ class DeleteTableTemplateResponse500(TypedDict):
 
 
 class Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
-    error_key: Literal["batch_not_complete", "captcha_failed", "captcha_required", "invalid_input"]
-    fields: dict[str, list[Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInputFieldsValueItem]]
+    error_key: Literal[
+        "batch_not_complete", "captcha_failed", "captcha_required", "invalid_input"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInputFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[400]
     status_key: str
@@ -337,7 +393,9 @@ class Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
 
 class Err400CaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
     error_key: Literal["captcha_failed", "captcha_required", "invalid_input"]
-    fields: dict[str, list[Err400CaptchaFailedCaptchaRequiredInvalidInputFieldsValueItem]]
+    fields: dict[
+        str, list[Err400CaptchaFailedCaptchaRequiredInvalidInputFieldsValueItem]
+    ]
     message: str
     status: Literal[400]
     status_key: str
@@ -346,8 +404,15 @@ class Err400CaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
 
 
 class Err400CaptchaFailedCaptchaRequiredInvalidInputRowValidationFailed(TypedDict):
-    error_key: Literal["captcha_failed", "captcha_required", "invalid_input", "row_validation_failed"]
-    fields: dict[str, list[Err400CaptchaFailedCaptchaRequiredInvalidInputRowValidationFailedFieldsValueItem]]
+    error_key: Literal[
+        "captcha_failed", "captcha_required", "invalid_input", "row_validation_failed"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err400CaptchaFailedCaptchaRequiredInvalidInputRowValidationFailedFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[400]
     status_key: str
@@ -365,9 +430,23 @@ class Err401ImpersonationEndedUnauthorized(TypedDict):
     vars: NotRequired[dict[str, str | float]]
 
 
-class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitRowPlanLimit(TypedDict):
-    error_key: Literal["api_request_limit_exceeded", "credit_limit_exceeded", "feature_not_available", "file_count_plan_limit", "file_size_plan_limit", "row_plan_limit"]
-    fields: dict[str, list[Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitRowPlanLimitFieldsValueItem]]
+class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitRowPlanLimit(
+    TypedDict
+):
+    error_key: Literal[
+        "api_request_limit_exceeded",
+        "credit_limit_exceeded",
+        "feature_not_available",
+        "file_count_plan_limit",
+        "file_size_plan_limit",
+        "row_plan_limit",
+    ]
+    fields: dict[
+        str,
+        list[
+            Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitRowPlanLimitFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[402]
     status_key: str
@@ -375,9 +454,23 @@ class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCou
     vars: NotRequired[dict[str, str | float]]
 
 
-class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitTablePlanLimit(TypedDict):
-    error_key: Literal["api_request_limit_exceeded", "credit_limit_exceeded", "feature_not_available", "file_count_plan_limit", "file_size_plan_limit", "table_plan_limit"]
-    fields: dict[str, list[Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitTablePlanLimitFieldsValueItem]]
+class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitTablePlanLimit(
+    TypedDict
+):
+    error_key: Literal[
+        "api_request_limit_exceeded",
+        "credit_limit_exceeded",
+        "feature_not_available",
+        "file_count_plan_limit",
+        "file_size_plan_limit",
+        "table_plan_limit",
+    ]
+    fields: dict[
+        str,
+        list[
+            Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitTablePlanLimitFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[402]
     status_key: str
@@ -387,7 +480,9 @@ class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCou
 
 class Err402ApiRequestLimitExceededFeatureNotAvailable(TypedDict):
     error_key: Literal["api_request_limit_exceeded", "feature_not_available"]
-    fields: dict[str, list[Err402ApiRequestLimitExceededFeatureNotAvailableFieldsValueItem]]
+    fields: dict[
+        str, list[Err402ApiRequestLimitExceededFeatureNotAvailableFieldsValueItem]
+    ]
     message: str
     status: Literal[402]
     status_key: str
@@ -396,8 +491,15 @@ class Err402ApiRequestLimitExceededFeatureNotAvailable(TypedDict):
 
 
 class Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimit(TypedDict):
-    error_key: Literal["api_request_limit_exceeded", "feature_not_available", "row_plan_limit"]
-    fields: dict[str, list[Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimitFieldsValueItem]]
+    error_key: Literal[
+        "api_request_limit_exceeded", "feature_not_available", "row_plan_limit"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimitFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[402]
     status_key: str
@@ -406,8 +508,15 @@ class Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimit(TypedDict):
 
 
 class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspended(TypedDict):
-    error_key: Literal["email_not_verified", "forbidden", "impersonation_forbidden", "org_suspended"]
-    fields: dict[str, list[Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedFieldsValueItem]]
+    error_key: Literal[
+        "email_not_verified", "forbidden", "impersonation_forbidden", "org_suspended"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[403]
     status_key: str
@@ -415,9 +524,22 @@ class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspended(TypedDic
     vars: NotRequired[dict[str, str | float]]
 
 
-class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbidden(TypedDict):
-    error_key: Literal["email_not_verified", "forbidden", "impersonation_forbidden", "org_suspended", "table_template_forbidden"]
-    fields: dict[str, list[Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenFieldsValueItem]]
+class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbidden(
+    TypedDict
+):
+    error_key: Literal[
+        "email_not_verified",
+        "forbidden",
+        "impersonation_forbidden",
+        "org_suspended",
+        "table_template_forbidden",
+    ]
+    fields: dict[
+        str,
+        list[
+            Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[403]
     status_key: str
@@ -557,7 +679,9 @@ class Err415UnsupportedMediaType(TypedDict):
 
 class Err422ExtractionUnprocessableUnprocessableEntity(TypedDict):
     error_key: Literal["extraction_unprocessable", "unprocessable_entity"]
-    fields: dict[str, list[Err422ExtractionUnprocessableUnprocessableEntityFieldsValueItem]]
+    fields: dict[
+        str, list[Err422ExtractionUnprocessableUnprocessableEntityFieldsValueItem]
+    ]
     message: str
     status: Literal[422]
     status_key: str
@@ -586,8 +710,15 @@ class Err429TooManyRequests(TypedDict):
 
 
 class Err500BatchDownloadFailedCaptchaUnavailableInternalServerError(TypedDict):
-    error_key: Literal["batch_download_failed", "captcha_unavailable", "internal_server_error"]
-    fields: dict[str, list[Err500BatchDownloadFailedCaptchaUnavailableInternalServerErrorFieldsValueItem]]
+    error_key: Literal[
+        "batch_download_failed", "captcha_unavailable", "internal_server_error"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err500BatchDownloadFailedCaptchaUnavailableInternalServerErrorFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[500]
     status_key: str
@@ -596,8 +727,15 @@ class Err500BatchDownloadFailedCaptchaUnavailableInternalServerError(TypedDict):
 
 
 class Err500CaptchaUnavailableExtractionFailedInternalServerError(TypedDict):
-    error_key: Literal["captcha_unavailable", "extraction_failed", "internal_server_error"]
-    fields: dict[str, list[Err500CaptchaUnavailableExtractionFailedInternalServerErrorFieldsValueItem]]
+    error_key: Literal[
+        "captcha_unavailable", "extraction_failed", "internal_server_error"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err500CaptchaUnavailableExtractionFailedInternalServerErrorFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[500]
     status_key: str
@@ -616,8 +754,15 @@ class Err500CaptchaUnavailableInternalServerError(TypedDict):
 
 
 class Err500CaptchaUnavailableInternalServerErrorTableCreateFailed(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "table_create_failed"]
-    fields: dict[str, list[Err500CaptchaUnavailableInternalServerErrorTableCreateFailedFieldsValueItem]]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "table_create_failed"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err500CaptchaUnavailableInternalServerErrorTableCreateFailedFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[500]
     status_key: str
@@ -626,8 +771,15 @@ class Err500CaptchaUnavailableInternalServerErrorTableCreateFailed(TypedDict):
 
 
 class Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailed(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "webhook_update_failed"]
-    fields: dict[str, list[Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailedFieldsValueItem]]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "webhook_update_failed"
+    ]
+    fields: dict[
+        str,
+        list[
+            Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailedFieldsValueItem
+        ],
+    ]
     message: str
     status: Literal[500]
     status_key: str
@@ -657,7 +809,9 @@ class Err502BadGatewayEmailSendFailed(TypedDict):
 
 class Err503ExtractionUnavailableServiceUnavailable(TypedDict):
     error_key: Literal["extraction_unavailable", "service_unavailable"]
-    fields: dict[str, list[Err503ExtractionUnavailableServiceUnavailableFieldsValueItem]]
+    fields: dict[
+        str, list[Err503ExtractionUnavailableServiceUnavailableFieldsValueItem]
+    ]
     message: str
     status: Literal[503]
     status_key: str
@@ -716,7 +870,9 @@ class GetProjectsBatcheResponse200(TypedDict):
     json_key: str | None
     project_id: str
     schema_json: GetProjectsBatcheResponse200SchemaJson
-    status: Literal["uploading", "processing", "merging", "complete", "partial", "failed"]
+    status: Literal[
+        "uploading", "processing", "merging", "complete", "partial", "failed"
+    ]
     table_id: str | None
     total_rows: int | None
     updated_at: int
@@ -836,7 +992,9 @@ class ListProjectsTablesExportResponse200(TypedDict):
 
 
 class ListProjectsTablesExportResponse402(TypedDict):
-    error_key: Literal["api_request_limit_exceeded", "export_limit_exceeded", "feature_not_available"]
+    error_key: Literal[
+        "api_request_limit_exceeded", "export_limit_exceeded", "feature_not_available"
+    ]
     fields: dict[str, list[ListProjectsTablesExportResponse402FieldsValueItem]]
     message: str
     status: Literal[402]
@@ -877,7 +1035,13 @@ ListProjectsTablesRowsResponse20021d74b: TypeAlias = "dict[str, float | None]"
 
 
 class ListProjectsTablesRowsResponse400(TypedDict):
-    error_key: Literal["captcha_failed", "captcha_required", "invalid_aggregation", "invalid_filter", "invalid_input"]
+    error_key: Literal[
+        "captcha_failed",
+        "captcha_required",
+        "invalid_aggregation",
+        "invalid_filter",
+        "invalid_input",
+    ]
     fields: dict[str, list[ListProjectsTablesRowsResponse400FieldsValueItem]]
     message: str
     status: Literal[400]
@@ -887,7 +1051,9 @@ class ListProjectsTablesRowsResponse400(TypedDict):
 
 
 class ListProjectsTablesRowsSourceResponse404(TypedDict):
-    error_key: Literal["not_found", "row_not_found", "row_source_not_found", "table_not_found"]
+    error_key: Literal[
+        "not_found", "row_not_found", "row_source_not_found", "table_not_found"
+    ]
     fields: dict[str, list[ListProjectsTablesRowsSourceResponse404FieldsValueItem]]
     message: str
     status: Literal[404]
@@ -901,7 +1067,9 @@ class ReplaceProjectsTablesColumnRequest(TypedDict):
 
 
 class ReplaceProjectsTablesColumnResponse400(TypedDict):
-    error_key: Literal["captcha_failed", "captcha_required", "column_reorder_mismatch", "invalid_input"]
+    error_key: Literal[
+        "captcha_failed", "captcha_required", "column_reorder_mismatch", "invalid_input"
+    ]
     fields: dict[str, list[ReplaceProjectsTablesColumnResponse400FieldsValueItem]]
     message: str
     status: Literal[400]
@@ -922,7 +1090,9 @@ class ReplaceProjectsTablesColumnResponse409(TypedDict):
 
 class UpdateOrganizationsWebhookRequest(TypedDict):
     active: NotRequired[bool]
-    events: NotRequired[list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]]
+    events: NotRequired[
+        list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
+    ]
     name: NotRequired[str]
     url: NotRequired[str]
 
@@ -938,7 +1108,9 @@ class UpdateProjectsTableRequest(TypedDict):
 
 
 class UpdateProjectsTableResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "table_update_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "table_update_failed"
+    ]
     fields: dict[str, list[UpdateProjectsTableResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -954,7 +1126,21 @@ class UpdateProjectsTablesColumnRequest(TypedDict):
     options: NotRequired[list[str]]
     required: NotRequired[bool]
     searchable: NotRequired[bool]
-    type: NotRequired[Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]]
+    type: NotRequired[
+        Literal[
+            "array",
+            "boolean",
+            "currency",
+            "date",
+            "email",
+            "enum",
+            "multi_select",
+            "number",
+            "string",
+            "text",
+            "url",
+        ]
+    ]
 
 
 class UpdateProjectsTablesColumnResponse422(TypedDict):
@@ -968,7 +1154,9 @@ class UpdateProjectsTablesColumnResponse422(TypedDict):
 
 
 class UpdateProjectsTablesColumnResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "column_rename_failed", "internal_server_error"]
+    error_key: Literal[
+        "captcha_unavailable", "column_rename_failed", "internal_server_error"
+    ]
     fields: dict[str, list[UpdateProjectsTablesColumnResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -978,7 +1166,9 @@ class UpdateProjectsTablesColumnResponse500(TypedDict):
 
 
 class UpdateProjectsTablesRowResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "row_update_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "row_update_failed"
+    ]
     fields: dict[str, list[UpdateProjectsTablesRowResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -999,7 +1189,9 @@ class UpdateTableTemplateRequest(TypedDict):
 
 
 class UpdateTableTemplateResponse500(TypedDict):
-    error_key: Literal["captcha_unavailable", "internal_server_error", "table_template_update_failed"]
+    error_key: Literal[
+        "captcha_unavailable", "internal_server_error", "table_template_update_failed"
+    ]
     fields: dict[str, list[UpdateTableTemplateResponse500FieldsValueItem]]
     message: str
     status: Literal[500]
@@ -1044,7 +1236,21 @@ class CreateProjectsTableRequestColumnsJsonItem(TypedDict):
     options: NotRequired[list[str]]
     required: NotRequired[bool]
     searchable: NotRequired[bool]
-    type: NotRequired[Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]]
+    type: NotRequired[
+        Literal[
+            "array",
+            "boolean",
+            "currency",
+            "date",
+            "email",
+            "enum",
+            "multi_select",
+            "number",
+            "string",
+            "text",
+            "url",
+        ]
+    ]
 
 
 class CreateProjectsTableResponse402FieldsValueItem(TypedDict):
@@ -1063,7 +1269,19 @@ class CreateProjectsTableTemplatesUseResponse201ColumnsJsonItem(TypedDict):
     options: NotRequired[list[str]]
     required: bool
     searchable: NotRequired[bool]
-    type: Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class CreateProjectsTableTemplatesUseResponse402FieldsValueItem(TypedDict):
@@ -1129,7 +1347,21 @@ class CreateTableTemplateRequestColumnsJsonItem(TypedDict):
     options: NotRequired[list[str]]
     required: NotRequired[bool]
     searchable: NotRequired[bool]
-    type: NotRequired[Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]]
+    type: NotRequired[
+        Literal[
+            "array",
+            "boolean",
+            "currency",
+            "date",
+            "email",
+            "enum",
+            "multi_select",
+            "number",
+            "string",
+            "text",
+            "url",
+        ]
+    ]
 
 
 class CreateTableTemplateResponse500FieldsValueItem(TypedDict):
@@ -1168,7 +1400,9 @@ class DeleteTableTemplateResponse500FieldsValueItem(TypedDict):
     path: str
 
 
-class Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInputFieldsValueItem(TypedDict):
+class Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInputFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
@@ -1180,7 +1414,9 @@ class Err400CaptchaFailedCaptchaRequiredInvalidInputFieldsValueItem(TypedDict):
     path: str
 
 
-class Err400CaptchaFailedCaptchaRequiredInvalidInputRowValidationFailedFieldsValueItem(TypedDict):
+class Err400CaptchaFailedCaptchaRequiredInvalidInputRowValidationFailedFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
@@ -1192,13 +1428,17 @@ class Err401ImpersonationEndedUnauthorizedFieldsValueItem(TypedDict):
     path: str
 
 
-class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitRowPlanLimitFieldsValueItem(TypedDict):
+class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitRowPlanLimitFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
 
 
-class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitTablePlanLimitFieldsValueItem(TypedDict):
+class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitTablePlanLimitFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
@@ -1210,19 +1450,25 @@ class Err402ApiRequestLimitExceededFeatureNotAvailableFieldsValueItem(TypedDict)
     path: str
 
 
-class Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimitFieldsValueItem(TypedDict):
+class Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimitFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
 
 
-class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedFieldsValueItem(TypedDict):
+class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
 
 
-class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenFieldsValueItem(TypedDict):
+class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
@@ -1324,13 +1570,17 @@ class Err429TooManyRequestsFieldsValueItem(TypedDict):
     path: str
 
 
-class Err500BatchDownloadFailedCaptchaUnavailableInternalServerErrorFieldsValueItem(TypedDict):
+class Err500BatchDownloadFailedCaptchaUnavailableInternalServerErrorFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
 
 
-class Err500CaptchaUnavailableExtractionFailedInternalServerErrorFieldsValueItem(TypedDict):
+class Err500CaptchaUnavailableExtractionFailedInternalServerErrorFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
@@ -1342,13 +1592,17 @@ class Err500CaptchaUnavailableInternalServerErrorFieldsValueItem(TypedDict):
     path: str
 
 
-class Err500CaptchaUnavailableInternalServerErrorTableCreateFailedFieldsValueItem(TypedDict):
+class Err500CaptchaUnavailableInternalServerErrorTableCreateFailedFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
 
 
-class Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailedFieldsValueItem(TypedDict):
+class Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailedFieldsValueItem(
+    TypedDict
+):
     error_key: str
     message: str
     path: str
@@ -1420,7 +1674,9 @@ class GetProjectsBatcheResponse200ExtractionsItem(TypedDict):
     file_checksum: str | None
     file_key: str
     file_name: str
-    file_type: Literal["text_pdf", "scanned", "image", "text", "document", "unknown"] | None
+    file_type: (
+        Literal["text_pdf", "scanned", "image", "text", "document", "unknown"] | None
+    )
     id: str
     row_count: int | None
     rows_key: str | None
@@ -1438,7 +1694,19 @@ class GetProjectsBatcheResponse200SchemaJsonColumnsItem(TypedDict):
     description: NotRequired[str | None]
     instruction: NotRequired[str | None]
     name: str
-    type: Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class GetProjectsBatcheResponse404FieldsValueItem(TypedDict):
@@ -1463,7 +1731,19 @@ class GetProjectsTableTemplateResponse200ColumnsJsonItem(TypedDict):
     options: NotRequired[list[str]]
     required: bool
     searchable: NotRequired[bool]
-    type: Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class ListOrganizationsWebhooksDeliveriesResponse200DeliveriesItem(TypedDict):
@@ -1510,7 +1790,9 @@ class ListProjectsBatchesResponse200BatchesItem(TypedDict):
     json_key: str | None
     project_id: str
     schema_json: ListProjectsBatchesResponse200BatchesItemSchemaJson
-    status: Literal["uploading", "processing", "merging", "complete", "partial", "failed"]
+    status: Literal[
+        "uploading", "processing", "merging", "complete", "partial", "failed"
+    ]
     table_id: str | None
     total_rows: int | None
     updated_at: int
@@ -1527,12 +1809,26 @@ class ListProjectsBatchesResponse200BatchesItemSchemaJsonColumnsItem(TypedDict):
     description: NotRequired[str | None]
     instruction: NotRequired[str | None]
     name: str
-    type: Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class ListProjectsTableTemplatesResponse200TemplatesItem(TypedDict):
     category: str
-    columns_json: list[ListProjectsTableTemplatesResponse200TemplatesItemColumnsJsonItem]
+    columns_json: list[
+        ListProjectsTableTemplatesResponse200TemplatesItemColumnsJsonItem
+    ]
     created_at: int
     creator_display_name: str | None
     creator_user_id: str | None
@@ -1557,7 +1853,19 @@ class ListProjectsTableTemplatesResponse200TemplatesItemColumnsJsonItem(TypedDic
     options: NotRequired[list[str]]
     required: bool
     searchable: NotRequired[bool]
-    type: Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class ListProjectsTablesExportResponse402FieldsValueItem(TypedDict):
@@ -1603,7 +1911,19 @@ class ListProjectsTablesResponse200TablesItemColumnsJsonItem(TypedDict):
     options: NotRequired[list[str]]
     required: bool
     searchable: NotRequired[bool]
-    type: Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class ListProjectsTablesRowsResponse400FieldsValueItem(TypedDict):
@@ -1669,7 +1989,21 @@ class UpdateTableTemplateRequestColumnsJsonItem(TypedDict):
     options: NotRequired[list[str]]
     required: NotRequired[bool]
     searchable: NotRequired[bool]
-    type: NotRequired[Literal["array", "boolean", "currency", "date", "email", "enum", "multi_select", "number", "string", "text", "url"]]
+    type: NotRequired[
+        Literal[
+            "array",
+            "boolean",
+            "currency",
+            "date",
+            "email",
+            "enum",
+            "multi_select",
+            "number",
+            "string",
+            "text",
+            "url",
+        ]
+    ]
 
 
 class UpdateTableTemplateResponse500FieldsValueItem(TypedDict):

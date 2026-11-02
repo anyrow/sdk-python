@@ -11,64 +11,383 @@ from ._honey.operation import Operation
 from ._honey.result import Safe
 from ._honey.send_async import AsyncTransport
 from ._honey.send_sync import SyncTransport
-from .types import CreateOrganizationsWebhookRequest, CreateOrganizationsWebhookResponse201, CreateOrganizationsWebhooksTestResponse200, CreateProjectsExtractResponse200, CreateProjectsSuggestSchemaResponse200, CreateProjectsTableRequest, CreateProjectsTablesColumnRequest, CreateProjectsTablesDuplicateRequest, CreateProjectsTablesRestoreRequest, CreateProjectsTablesRowRequest, CreateProjectsTablesRowRequestDbbb57, CreateProjectsTablesRowResponse200, CreateProjectsTableTemplatesUseRequest, CreateProjectsTableTemplatesUseResponse201, CreateTableTemplateRequest, DeleteOrganizationsWebhookResponse200, ErrorKey, ExtractOnceBody, ExtractStreamBody, ExtractTableOnceBody, ExtractTableStreamBody, GetOrganizationsWebhookResponse200, GetProjectsBatcheResponse200, GetProjectsExportResponse200, GetProjectsTableTemplateResponse200, ListOrganizationsWebhooksDeliveriesResponse200, ListOrganizationsWebhooksResponse200, ListProjectsBatchesDownloadJsonResponse200, ListProjectsBatchesResponse200, ListProjectsTablesColumnsDistinctResponse200, ListProjectsTablesExportResponse200, ListProjectsTablesResponse200, ListProjectsTablesRowsResponse200, ListProjectsTablesRowsResponse20021d74b, ListProjectsTableTemplatesResponse200, ReplaceProjectsTablesColumnRequest, SuggestSchemaBody, UpdateOrganizationsWebhookRequest, UpdateProjectsTableRequest, UpdateProjectsTablesColumnRequest, UpdateTableTemplateRequest
+from .types import (
+    CreateOrganizationsWebhookRequest,
+    CreateOrganizationsWebhookResponse201,
+    CreateOrganizationsWebhooksTestResponse200,
+    CreateProjectsExtractResponse200,
+    CreateProjectsSuggestSchemaResponse200,
+    CreateProjectsTableRequest,
+    CreateProjectsTablesColumnRequest,
+    CreateProjectsTablesDuplicateRequest,
+    CreateProjectsTablesRestoreRequest,
+    CreateProjectsTablesRowRequest,
+    CreateProjectsTablesRowRequestDbbb57,
+    CreateProjectsTablesRowResponse200,
+    CreateProjectsTableTemplatesUseRequest,
+    CreateProjectsTableTemplatesUseResponse201,
+    CreateTableTemplateRequest,
+    DeleteOrganizationsWebhookResponse200,
+    ErrorKey,
+    ExtractOnceBody,
+    ExtractStreamBody,
+    ExtractTableOnceBody,
+    ExtractTableStreamBody,
+    GetOrganizationsWebhookResponse200,
+    GetProjectsBatcheResponse200,
+    GetProjectsExportResponse200,
+    GetProjectsTableTemplateResponse200,
+    ListOrganizationsWebhooksDeliveriesResponse200,
+    ListOrganizationsWebhooksResponse200,
+    ListProjectsBatchesDownloadJsonResponse200,
+    ListProjectsBatchesResponse200,
+    ListProjectsTablesColumnsDistinctResponse200,
+    ListProjectsTablesExportResponse200,
+    ListProjectsTablesResponse200,
+    ListProjectsTablesRowsResponse200,
+    ListProjectsTablesRowsResponse20021d74b,
+    ListProjectsTableTemplatesResponse200,
+    ReplaceProjectsTablesColumnRequest,
+    SuggestSchemaBody,
+    UpdateOrganizationsWebhookRequest,
+    UpdateProjectsTableRequest,
+    UpdateProjectsTablesColumnRequest,
+    UpdateTableTemplateRequest,
+)
 
 _DEFAULTS = Defaults("/api", "Authorization", "ApiKey ", ErrorKey)
 
-_BATCH_DOWNLOAD_CSV: Operation[str] = Operation("GET", "/v1/projects/{project_id}/batches/{batch_id}/download/csv", ("project_id", "batch_id"), answer="text", accept="text/csv")
-_BATCH_DOWNLOAD_JSON: Operation[ListProjectsBatchesDownloadJsonResponse200] = Operation("GET", "/v1/projects/{project_id}/batches/{batch_id}/download/json", ("project_id", "batch_id"), shape="object")
-_BATCH_DOWNLOAD_XLSX: Operation[bytes] = Operation("GET", "/v1/projects/{project_id}/batches/{batch_id}/download/xlsx", ("project_id", "batch_id"), answer="binary", accept="application/octet-stream")
-_BATCH_LIST: Operation[ListProjectsBatchesResponse200] = Operation("GET", "/v1/projects/{project_id}/batches", ("project_id",), shape="object")
-_BATCH_RETRIEVE: Operation[GetProjectsBatcheResponse200] = Operation("GET", "/v1/projects/{project_id}/batches/{batch_id}", ("project_id", "batch_id"), shape="object")
-_COLUMN_ADD: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("POST", "/v1/projects/{project_id}/tables/{table_id}/columns", ("project_id", "table_id"), body="json", content_type="application/json", shape="object")
-_COLUMN_DISTINCT: Operation[ListProjectsTablesColumnsDistinctResponse200] = Operation("GET", "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}/distinct", ("project_id", "table_id", "col_id"), shape="object")
-_COLUMN_REMOVE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("DELETE", "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}", ("project_id", "table_id", "col_id"), shape="object")
-_COLUMN_REORDER: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("PUT", "/v1/projects/{project_id}/tables/{table_id}/columns/order", ("project_id", "table_id"), body="json", content_type="application/json", shape="object")
-_COLUMN_UPDATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("PATCH", "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}", ("project_id", "table_id", "col_id"), body="json", content_type="application/json", shape="object")
-_EXPORT_RETRIEVE: Operation[GetProjectsExportResponse200] = Operation("GET", "/v1/projects/{project_id}/exports/{export_id}", ("project_id", "export_id"), shape="object")
-_EXTRACT_ONCE: Operation[CreateProjectsExtractResponse200] = Operation("POST", "/v1/projects/{project_id}/extract", ("project_id",), body="multipart", content_type="multipart/form-data", shape="object")
-_EXTRACT_STREAM: Operation[str] = Operation("POST", "/v1/projects/{project_id}/extract-stream", ("project_id",), body="multipart", content_type="multipart/form-data", answer="text", accept="text/event-stream", stream="sse")
-_EXTRACT_TABLE_ONCE: Operation[CreateProjectsExtractResponse200] = Operation("POST", "/v1/projects/{project_id}/tables/{table_id}/extract", ("project_id", "table_id"), body="multipart", content_type="multipart/form-data", shape="object")
-_EXTRACT_TABLE_STREAM: Operation[str] = Operation("POST", "/v1/projects/{project_id}/tables/{table_id}/extract-stream", ("project_id", "table_id"), body="multipart", content_type="multipart/form-data", answer="text", accept="text/event-stream", stream="sse")
-_ROW_AGGREGATE: Operation[ListProjectsTablesRowsResponse20021d74b] = Operation("GET", "/v1/projects/{project_id}/tables/{table_id}/rows/aggregate", ("project_id", "table_id"), shape="object")
-_ROW_BULK: Operation[CreateProjectsTablesRowResponse200] = Operation("POST", "/v1/projects/{project_id}/tables/{table_id}/rows/bulk", ("project_id", "table_id"), body="json", content_type="application/json", shape="object")
-_ROW_CREATE: Operation[CreateProjectsTablesRowRequest] = Operation("POST", "/v1/projects/{project_id}/tables/{table_id}/rows", ("project_id", "table_id"), body="json", content_type="application/json", shape="object")
-_ROW_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation("DELETE", "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}", ("project_id", "table_id", "row_id"), shape="object")
-_ROW_LIST: Operation[ListProjectsTablesRowsResponse200] = Operation("GET", "/v1/projects/{project_id}/tables/{table_id}/rows", ("project_id", "table_id"), shape="object")
-_ROW_RETRIEVE: Operation[CreateProjectsTablesRowRequest] = Operation("GET", "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}", ("project_id", "table_id", "row_id"), shape="object")
-_ROW_SOURCE: Operation[bytes] = Operation("GET", "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}/source", ("project_id", "table_id", "row_id"), answer="binary", accept="application/octet-stream")
-_ROW_UPDATE: Operation[CreateProjectsTablesRowRequest] = Operation("PATCH", "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}", ("project_id", "table_id", "row_id"), body="json", content_type="application/json", shape="object")
-_SUGGEST_SCHEMA: Operation[CreateProjectsSuggestSchemaResponse200] = Operation("POST", "/v1/projects/{project_id}/suggest-schema", ("project_id",), body="multipart", content_type="multipart/form-data", shape="object")
-_TABLE_CREATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("POST", "/v1/projects/{project_id}/tables", ("project_id",), body="json", content_type="application/json", shape="object")
-_TABLE_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation("DELETE", "/v1/projects/{project_id}/tables/{table_id}", ("project_id", "table_id"), shape="object")
-_TABLE_DUPLICATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("POST", "/v1/projects/{project_id}/tables/{table_id}/duplicate", ("project_id", "table_id"), body="json", content_type="application/json", shape="object")
-_TABLE_EXPORT: Operation[ListProjectsTablesExportResponse200] = Operation("GET", "/v1/projects/{project_id}/tables/{table_id}/export", ("project_id", "table_id"), shape="object")
-_TABLE_LIST: Operation[ListProjectsTablesResponse200] = Operation("GET", "/v1/projects/{project_id}/tables", ("project_id",), shape="object")
-_TABLE_RESTORE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("POST", "/v1/projects/{project_id}/tables/{table_id}/restore", ("project_id", "table_id"), body="json", content_type="application/json", shape="object")
-_TABLE_RETRIEVE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("GET", "/v1/projects/{project_id}/tables/{table_id}", ("project_id", "table_id"), shape="object")
-_TABLE_TEMPLATE_CREATE: Operation[GetProjectsTableTemplateResponse200] = Operation("POST", "/v1/table-templates", body="json", content_type="application/json", shape="object")
-_TABLE_TEMPLATE_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation("DELETE", "/v1/table-templates/{template_id}", ("template_id",), shape="object")
-_TABLE_TEMPLATE_LIST_MINE: Operation[ListProjectsTableTemplatesResponse200] = Operation("GET", "/v1/table-templates/mine", shape="object")
-_TABLE_TEMPLATE_PROJECT_LIST: Operation[ListProjectsTableTemplatesResponse200] = Operation("GET", "/v1/projects/{project_id}/table-templates", ("project_id",), shape="object")
-_TABLE_TEMPLATE_PROJECT_RETRIEVE: Operation[GetProjectsTableTemplateResponse200] = Operation("GET", "/v1/projects/{project_id}/table-templates/{template_id}", ("project_id", "template_id"), shape="object")
-_TABLE_TEMPLATE_UPDATE: Operation[GetProjectsTableTemplateResponse200] = Operation("PATCH", "/v1/table-templates/{template_id}", ("template_id",), body="json", content_type="application/json", shape="object")
-_TABLE_TEMPLATE_USE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("POST", "/v1/projects/{project_id}/table-templates/{template_id}/use", ("project_id", "template_id"), body="json", content_type="application/json", shape="object")
-_TABLE_UPDATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation("PATCH", "/v1/projects/{project_id}/tables/{table_id}", ("project_id", "table_id"), body="json", content_type="application/json", shape="object")
-_WEBHOOK_CREATE: Operation[CreateOrganizationsWebhookResponse201] = Operation("POST", "/v1/organizations/{organization_id}/webhooks", ("organization_id",), body="json", content_type="application/json", shape="object")
-_WEBHOOK_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation("DELETE", "/v1/organizations/{organization_id}/webhooks/{id}", ("organization_id", "id"), shape="object")
-_WEBHOOK_DELIVERIES: Operation[ListOrganizationsWebhooksDeliveriesResponse200] = Operation("GET", "/v1/organizations/{organization_id}/webhooks/{id}/deliveries", ("organization_id", "id"), shape="object")
-_WEBHOOK_LIST: Operation[ListOrganizationsWebhooksResponse200] = Operation("GET", "/v1/organizations/{organization_id}/webhooks", ("organization_id",), shape="object")
-_WEBHOOK_RETRIEVE: Operation[GetOrganizationsWebhookResponse200] = Operation("GET", "/v1/organizations/{organization_id}/webhooks/{id}", ("organization_id", "id"), shape="object")
-_WEBHOOK_ROTATE_SECRET: Operation[CreateOrganizationsWebhookResponse201] = Operation("POST", "/v1/organizations/{organization_id}/webhooks/{id}/rotate-secret", ("organization_id", "id"), shape="object")
-_WEBHOOK_TEST: Operation[CreateOrganizationsWebhooksTestResponse200] = Operation("POST", "/v1/organizations/{organization_id}/webhooks/{id}/test", ("organization_id", "id"), shape="object")
-_WEBHOOK_UPDATE: Operation[GetOrganizationsWebhookResponse200] = Operation("PATCH", "/v1/organizations/{organization_id}/webhooks/{id}", ("organization_id", "id"), body="json", content_type="application/json", shape="object")
+_BATCH_DOWNLOAD_CSV: Operation[str] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/batches/{batch_id}/download/csv",
+    ("project_id", "batch_id"),
+    answer="text",
+    accept="text/csv",
+)
+_BATCH_DOWNLOAD_JSON: Operation[ListProjectsBatchesDownloadJsonResponse200] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/batches/{batch_id}/download/json",
+    ("project_id", "batch_id"),
+    shape="object",
+)
+_BATCH_DOWNLOAD_XLSX: Operation[bytes] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/batches/{batch_id}/download/xlsx",
+    ("project_id", "batch_id"),
+    answer="binary",
+    accept="application/octet-stream",
+)
+_BATCH_LIST: Operation[ListProjectsBatchesResponse200] = Operation(
+    "GET", "/v1/projects/{project_id}/batches", ("project_id",), shape="object"
+)
+_BATCH_RETRIEVE: Operation[GetProjectsBatcheResponse200] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/batches/{batch_id}",
+    ("project_id", "batch_id"),
+    shape="object",
+)
+_COLUMN_ADD: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables/{table_id}/columns",
+    ("project_id", "table_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_COLUMN_DISTINCT: Operation[ListProjectsTablesColumnsDistinctResponse200] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}/distinct",
+    ("project_id", "table_id", "col_id"),
+    shape="object",
+)
+_COLUMN_REMOVE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "DELETE",
+    "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}",
+    ("project_id", "table_id", "col_id"),
+    shape="object",
+)
+_COLUMN_REORDER: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "PUT",
+    "/v1/projects/{project_id}/tables/{table_id}/columns/order",
+    ("project_id", "table_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_COLUMN_UPDATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "PATCH",
+    "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}",
+    ("project_id", "table_id", "col_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_EXPORT_RETRIEVE: Operation[GetProjectsExportResponse200] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/exports/{export_id}",
+    ("project_id", "export_id"),
+    shape="object",
+)
+_EXTRACT_ONCE: Operation[CreateProjectsExtractResponse200] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/extract",
+    ("project_id",),
+    body="multipart",
+    content_type="multipart/form-data",
+    shape="object",
+)
+_EXTRACT_STREAM: Operation[str] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/extract-stream",
+    ("project_id",),
+    body="multipart",
+    content_type="multipart/form-data",
+    answer="text",
+    accept="text/event-stream",
+    stream="sse",
+)
+_EXTRACT_TABLE_ONCE: Operation[CreateProjectsExtractResponse200] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables/{table_id}/extract",
+    ("project_id", "table_id"),
+    body="multipart",
+    content_type="multipart/form-data",
+    shape="object",
+)
+_EXTRACT_TABLE_STREAM: Operation[str] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables/{table_id}/extract-stream",
+    ("project_id", "table_id"),
+    body="multipart",
+    content_type="multipart/form-data",
+    answer="text",
+    accept="text/event-stream",
+    stream="sse",
+)
+_ROW_AGGREGATE: Operation[ListProjectsTablesRowsResponse20021d74b] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/tables/{table_id}/rows/aggregate",
+    ("project_id", "table_id"),
+    shape="object",
+)
+_ROW_BULK: Operation[CreateProjectsTablesRowResponse200] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables/{table_id}/rows/bulk",
+    ("project_id", "table_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_ROW_CREATE: Operation[CreateProjectsTablesRowRequest] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables/{table_id}/rows",
+    ("project_id", "table_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_ROW_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
+    "DELETE",
+    "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}",
+    ("project_id", "table_id", "row_id"),
+    shape="object",
+)
+_ROW_LIST: Operation[ListProjectsTablesRowsResponse200] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/tables/{table_id}/rows",
+    ("project_id", "table_id"),
+    shape="object",
+)
+_ROW_RETRIEVE: Operation[CreateProjectsTablesRowRequest] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}",
+    ("project_id", "table_id", "row_id"),
+    shape="object",
+)
+_ROW_SOURCE: Operation[bytes] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}/source",
+    ("project_id", "table_id", "row_id"),
+    answer="binary",
+    accept="application/octet-stream",
+)
+_ROW_UPDATE: Operation[CreateProjectsTablesRowRequest] = Operation(
+    "PATCH",
+    "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}",
+    ("project_id", "table_id", "row_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_SUGGEST_SCHEMA: Operation[CreateProjectsSuggestSchemaResponse200] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/suggest-schema",
+    ("project_id",),
+    body="multipart",
+    content_type="multipart/form-data",
+    shape="object",
+)
+_TABLE_CREATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables",
+    ("project_id",),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_TABLE_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
+    "DELETE",
+    "/v1/projects/{project_id}/tables/{table_id}",
+    ("project_id", "table_id"),
+    shape="object",
+)
+_TABLE_DUPLICATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables/{table_id}/duplicate",
+    ("project_id", "table_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_TABLE_EXPORT: Operation[ListProjectsTablesExportResponse200] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/tables/{table_id}/export",
+    ("project_id", "table_id"),
+    shape="object",
+)
+_TABLE_LIST: Operation[ListProjectsTablesResponse200] = Operation(
+    "GET", "/v1/projects/{project_id}/tables", ("project_id",), shape="object"
+)
+_TABLE_RESTORE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/tables/{table_id}/restore",
+    ("project_id", "table_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_TABLE_RETRIEVE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "GET",
+    "/v1/projects/{project_id}/tables/{table_id}",
+    ("project_id", "table_id"),
+    shape="object",
+)
+_TABLE_TEMPLATE_CREATE: Operation[GetProjectsTableTemplateResponse200] = Operation(
+    "POST",
+    "/v1/table-templates",
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_TABLE_TEMPLATE_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
+    "DELETE", "/v1/table-templates/{template_id}", ("template_id",), shape="object"
+)
+_TABLE_TEMPLATE_LIST_MINE: Operation[ListProjectsTableTemplatesResponse200] = Operation(
+    "GET", "/v1/table-templates/mine", shape="object"
+)
+_TABLE_TEMPLATE_PROJECT_LIST: Operation[ListProjectsTableTemplatesResponse200] = (
+    Operation(
+        "GET",
+        "/v1/projects/{project_id}/table-templates",
+        ("project_id",),
+        shape="object",
+    )
+)
+_TABLE_TEMPLATE_PROJECT_RETRIEVE: Operation[GetProjectsTableTemplateResponse200] = (
+    Operation(
+        "GET",
+        "/v1/projects/{project_id}/table-templates/{template_id}",
+        ("project_id", "template_id"),
+        shape="object",
+    )
+)
+_TABLE_TEMPLATE_UPDATE: Operation[GetProjectsTableTemplateResponse200] = Operation(
+    "PATCH",
+    "/v1/table-templates/{template_id}",
+    ("template_id",),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_TABLE_TEMPLATE_USE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "POST",
+    "/v1/projects/{project_id}/table-templates/{template_id}/use",
+    ("project_id", "template_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_TABLE_UPDATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+    "PATCH",
+    "/v1/projects/{project_id}/tables/{table_id}",
+    ("project_id", "table_id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_WEBHOOK_CREATE: Operation[CreateOrganizationsWebhookResponse201] = Operation(
+    "POST",
+    "/v1/organizations/{organization_id}/webhooks",
+    ("organization_id",),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
+_WEBHOOK_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
+    "DELETE",
+    "/v1/organizations/{organization_id}/webhooks/{id}",
+    ("organization_id", "id"),
+    shape="object",
+)
+_WEBHOOK_DELIVERIES: Operation[ListOrganizationsWebhooksDeliveriesResponse200] = (
+    Operation(
+        "GET",
+        "/v1/organizations/{organization_id}/webhooks/{id}/deliveries",
+        ("organization_id", "id"),
+        shape="object",
+    )
+)
+_WEBHOOK_LIST: Operation[ListOrganizationsWebhooksResponse200] = Operation(
+    "GET",
+    "/v1/organizations/{organization_id}/webhooks",
+    ("organization_id",),
+    shape="object",
+)
+_WEBHOOK_RETRIEVE: Operation[GetOrganizationsWebhookResponse200] = Operation(
+    "GET",
+    "/v1/organizations/{organization_id}/webhooks/{id}",
+    ("organization_id", "id"),
+    shape="object",
+)
+_WEBHOOK_ROTATE_SECRET: Operation[CreateOrganizationsWebhookResponse201] = Operation(
+    "POST",
+    "/v1/organizations/{organization_id}/webhooks/{id}/rotate-secret",
+    ("organization_id", "id"),
+    shape="object",
+)
+_WEBHOOK_TEST: Operation[CreateOrganizationsWebhooksTestResponse200] = Operation(
+    "POST",
+    "/v1/organizations/{organization_id}/webhooks/{id}/test",
+    ("organization_id", "id"),
+    shape="object",
+)
+_WEBHOOK_UPDATE: Operation[GetOrganizationsWebhookResponse200] = Operation(
+    "PATCH",
+    "/v1/organizations/{organization_id}/webhooks/{id}",
+    ("organization_id", "id"),
+    body="json",
+    content_type="application/json",
+    shape="object",
+)
 
 
 class BatchDownloadResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def csv(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> str:
+    def csv(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> str:
         """Download batch CSV
 
         Raises:
@@ -87,9 +406,13 @@ class BatchDownloadResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_BATCH_DOWNLOAD_CSV, path=(project_id, batch_id), options=options)
+        return self._t.call(
+            _BATCH_DOWNLOAD_CSV, path=(project_id, batch_id), options=options
+        )
 
-    def json(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> ListProjectsBatchesDownloadJsonResponse200:
+    def json(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> ListProjectsBatchesDownloadJsonResponse200:
         """Download batch JSON
 
         Raises:
@@ -108,9 +431,13 @@ class BatchDownloadResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_BATCH_DOWNLOAD_JSON, path=(project_id, batch_id), options=options)
+        return self._t.call(
+            _BATCH_DOWNLOAD_JSON, path=(project_id, batch_id), options=options
+        )
 
-    def xlsx(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> bytes:
+    def xlsx(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> bytes:
         """Download batch XLSX
 
         Raises:
@@ -129,7 +456,9 @@ class BatchDownloadResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_BATCH_DOWNLOAD_XLSX, path=(project_id, batch_id), options=options)
+        return self._t.call(
+            _BATCH_DOWNLOAD_XLSX, path=(project_id, batch_id), options=options
+        )
 
 
 class BatchResource:
@@ -137,7 +466,20 @@ class BatchResource:
         self._t = transport
         self.download = BatchDownloadResource(transport)
 
-    def list(self, project_id: str, *, cursor: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, status: Literal["uploading", "processing", "merging", "complete", "partial", "failed"] | None = None, options: RequestOptions | None = None) -> ListProjectsBatchesResponse200:
+    def list(
+        self,
+        project_id: str,
+        *,
+        cursor: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        status: Literal[
+            "uploading", "processing", "merging", "complete", "partial", "failed"
+        ]
+        | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsBatchesResponse200:
         """List batches
 
         Raises:
@@ -156,9 +498,22 @@ class BatchResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_BATCH_LIST, path=(project_id,), query={"cursor": cursor, "limit": limit, "order": order, "page": page, "status": status}, options=options)
+        return self._t.call(
+            _BATCH_LIST,
+            path=(project_id,),
+            query={
+                "cursor": cursor,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "status": status,
+            },
+            options=options,
+        )
 
-    def retrieve(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> GetProjectsBatcheResponse200:
+    def retrieve(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> GetProjectsBatcheResponse200:
         """Get batch
 
         Raises:
@@ -177,14 +532,23 @@ class BatchResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_BATCH_RETRIEVE, path=(project_id, batch_id), options=options)
+        return self._t.call(
+            _BATCH_RETRIEVE, path=(project_id, batch_id), options=options
+        )
 
 
 class ColumnResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def add(self, project_id: str, table_id: str, body: CreateProjectsTablesColumnRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def add(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesColumnRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Add column
 
         Raises:
@@ -205,9 +569,20 @@ class ColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_COLUMN_ADD, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _COLUMN_ADD, path=(project_id, table_id), body=body, options=options
+        )
 
-    def distinct(self, project_id: str, table_id: str, col_id: str, *, limit: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesColumnsDistinctResponse200:
+    def distinct(
+        self,
+        project_id: str,
+        table_id: str,
+        col_id: str,
+        *,
+        limit: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesColumnsDistinctResponse200:
         """Get distinct column values
 
         Raises:
@@ -227,9 +602,21 @@ class ColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_COLUMN_DISTINCT, path=(project_id, table_id, col_id), query={"limit": limit, "q": q}, options=options)
+        return self._t.call(
+            _COLUMN_DISTINCT,
+            path=(project_id, table_id, col_id),
+            query={"limit": limit, "q": q},
+            options=options,
+        )
 
-    def remove(self, project_id: str, table_id: str, col_id: str, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def remove(
+        self,
+        project_id: str,
+        table_id: str,
+        col_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Remove column
 
         Raises:
@@ -250,9 +637,18 @@ class ColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_COLUMN_REMOVE, path=(project_id, table_id, col_id), options=options)
+        return self._t.call(
+            _COLUMN_REMOVE, path=(project_id, table_id, col_id), options=options
+        )
 
-    def reorder(self, project_id: str, table_id: str, body: ReplaceProjectsTablesColumnRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def reorder(
+        self,
+        project_id: str,
+        table_id: str,
+        body: ReplaceProjectsTablesColumnRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Reorder columns
 
         Raises:
@@ -273,9 +669,19 @@ class ColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_COLUMN_REORDER, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _COLUMN_REORDER, path=(project_id, table_id), body=body, options=options
+        )
 
-    def update(self, project_id: str, table_id: str, col_id: str, body: UpdateProjectsTablesColumnRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def update(
+        self,
+        project_id: str,
+        table_id: str,
+        col_id: str,
+        body: UpdateProjectsTablesColumnRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Update column
 
         Raises:
@@ -296,14 +702,21 @@ class ColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_COLUMN_UPDATE, path=(project_id, table_id, col_id), body=body, options=options)
+        return self._t.call(
+            _COLUMN_UPDATE,
+            path=(project_id, table_id, col_id),
+            body=body,
+            options=options,
+        )
 
 
 class ExportResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def retrieve(self, project_id: str, export_id: str, *, options: RequestOptions | None = None) -> GetProjectsExportResponse200:
+    def retrieve(
+        self, project_id: str, export_id: str, *, options: RequestOptions | None = None
+    ) -> GetProjectsExportResponse200:
         """Get export status
 
         Raises:
@@ -322,14 +735,23 @@ class ExportResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_EXPORT_RETRIEVE, path=(project_id, export_id), options=options)
+        return self._t.call(
+            _EXPORT_RETRIEVE, path=(project_id, export_id), options=options
+        )
 
 
 class ExtractTableResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def once(self, project_id: str, table_id: str, body: ExtractTableOnceBody, *, options: RequestOptions | None = None) -> CreateProjectsExtractResponse200:
+    def once(
+        self,
+        project_id: str,
+        table_id: str,
+        body: ExtractTableOnceBody,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsExtractResponse200:
         """Extract into table (JSON response)
 
         Raises:
@@ -349,7 +771,9 @@ class ExtractTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_EXTRACT_TABLE_ONCE, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _EXTRACT_TABLE_ONCE, path=(project_id, table_id), body=body, options=options
+        )
 
 
 class ExtractResource:
@@ -357,7 +781,13 @@ class ExtractResource:
         self._t = transport
         self.table = ExtractTableResource(transport)
 
-    def once(self, project_id: str, body: ExtractOnceBody, *, options: RequestOptions | None = None) -> CreateProjectsExtractResponse200:
+    def once(
+        self,
+        project_id: str,
+        body: ExtractOnceBody,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsExtractResponse200:
         """Extract data from text or file (JSON response)
 
         Raises:
@@ -376,14 +806,24 @@ class ExtractResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_EXTRACT_ONCE, path=(project_id,), body=body, options=options)
+        return self._t.call(
+            _EXTRACT_ONCE, path=(project_id,), body=body, options=options
+        )
 
 
 class RowResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def aggregate(self, project_id: str, table_id: str, *, aggs: str, filter: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesRowsResponse20021d74b:
+    def aggregate(
+        self,
+        project_id: str,
+        table_id: str,
+        *,
+        aggs: str,
+        filter: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesRowsResponse20021d74b:
         """Aggregate column values
 
         Raises:
@@ -403,9 +843,21 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_AGGREGATE, path=(project_id, table_id), query={"aggs": aggs, "filter": filter}, options=options)
+        return self._t.call(
+            _ROW_AGGREGATE,
+            path=(project_id, table_id),
+            query={"aggs": aggs, "filter": filter},
+            options=options,
+        )
 
-    def bulk(self, project_id: str, table_id: str, body: CreateProjectsTablesRowRequestDbbb57, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowResponse200:
+    def bulk(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesRowRequestDbbb57,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowResponse200:
         """Bulk create/update/delete rows
 
         Raises:
@@ -425,9 +877,18 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_BULK, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _ROW_BULK, path=(project_id, table_id), body=body, options=options
+        )
 
-    def create(self, project_id: str, table_id: str, body: CreateProjectsTablesRowRequest, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowRequest:
+    def create(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesRowRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowRequest:
         """Create row
 
         Raises:
@@ -447,9 +908,18 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_CREATE, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _ROW_CREATE, path=(project_id, table_id), body=body, options=options
+        )
 
-    def delete(self, project_id: str, table_id: str, row_id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    def delete(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete row
 
         Raises:
@@ -469,9 +939,23 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_DELETE, path=(project_id, table_id, row_id), options=options)
+        return self._t.call(
+            _ROW_DELETE, path=(project_id, table_id, row_id), options=options
+        )
 
-    def list(self, project_id: str, table_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesRowsResponse200:
+    def list(
+        self,
+        project_id: str,
+        table_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesRowsResponse200:
         """List rows
 
         Raises:
@@ -491,9 +975,28 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_LIST, path=(project_id, table_id), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return self._t.call(
+            _ROW_LIST,
+            path=(project_id, table_id),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    def retrieve(self, project_id: str, table_id: str, row_id: str, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowRequest:
+    def retrieve(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowRequest:
         """Get row
 
         Raises:
@@ -513,9 +1016,19 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_RETRIEVE, path=(project_id, table_id, row_id), options=options)
+        return self._t.call(
+            _ROW_RETRIEVE, path=(project_id, table_id, row_id), options=options
+        )
 
-    def source(self, project_id: str, table_id: str, row_id: str, *, disposition: Literal["attachment", "inline"] | None = None, options: RequestOptions | None = None) -> bytes:
+    def source(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        *,
+        disposition: Literal["attachment", "inline"] | None = None,
+        options: RequestOptions | None = None,
+    ) -> bytes:
         """The source file behind a row: download it, or open a PDF or image inline
 
         Raises:
@@ -535,9 +1048,22 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_SOURCE, path=(project_id, table_id, row_id), query={"disposition": disposition}, options=options)
+        return self._t.call(
+            _ROW_SOURCE,
+            path=(project_id, table_id, row_id),
+            query={"disposition": disposition},
+            options=options,
+        )
 
-    def update(self, project_id: str, table_id: str, row_id: str, body: CreateProjectsTablesRowRequest, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowRequest:
+    def update(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        body: CreateProjectsTablesRowRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowRequest:
         """Update row
 
         Raises:
@@ -557,14 +1083,22 @@ class RowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_ROW_UPDATE, path=(project_id, table_id, row_id), body=body, options=options)
+        return self._t.call(
+            _ROW_UPDATE, path=(project_id, table_id, row_id), body=body, options=options
+        )
 
 
 class SuggestResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def schema(self, project_id: str, body: SuggestSchemaBody, *, options: RequestOptions | None = None) -> CreateProjectsSuggestSchemaResponse200:
+    def schema(
+        self,
+        project_id: str,
+        body: SuggestSchemaBody,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsSuggestSchemaResponse200:
         """Suggest schema from text or file (multipart)
 
         Raises:
@@ -583,14 +1117,22 @@ class SuggestResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_SUGGEST_SCHEMA, path=(project_id,), body=body, options=options)
+        return self._t.call(
+            _SUGGEST_SCHEMA, path=(project_id,), body=body, options=options
+        )
 
 
 class TableResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def create(self, project_id: str, body: CreateProjectsTableRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def create(
+        self,
+        project_id: str,
+        body: CreateProjectsTableRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Create table
 
         Raises:
@@ -609,9 +1151,13 @@ class TableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_CREATE, path=(project_id,), body=body, options=options)
+        return self._t.call(
+            _TABLE_CREATE, path=(project_id,), body=body, options=options
+        )
 
-    def delete(self, project_id: str, table_id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    def delete(
+        self, project_id: str, table_id: str, *, options: RequestOptions | None = None
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete table (soft, 72h grace)
 
         Raises:
@@ -632,7 +1178,14 @@ class TableResource:
         """
         return self._t.call(_TABLE_DELETE, path=(project_id, table_id), options=options)
 
-    def duplicate(self, project_id: str, table_id: str, body: CreateProjectsTablesDuplicateRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def duplicate(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesDuplicateRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Duplicate table structure
 
         Raises:
@@ -652,9 +1205,23 @@ class TableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_DUPLICATE, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _TABLE_DUPLICATE, path=(project_id, table_id), body=body, options=options
+        )
 
-    def export(self, project_id: str, table_id: str, *, filter: str | None = None, format: Literal["csv", "json", "xlsx"], order: str | None = None, schema: Literal["true", "false"] | None = None, search: str | None = None, since: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesExportResponse200:
+    def export(
+        self,
+        project_id: str,
+        table_id: str,
+        *,
+        filter: str | None = None,
+        format: Literal["csv", "json", "xlsx"],
+        order: str | None = None,
+        schema: Literal["true", "false"] | None = None,
+        search: str | None = None,
+        since: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesExportResponse200:
         """Export table rows
 
         Raises:
@@ -674,9 +1241,32 @@ class TableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_EXPORT, path=(project_id, table_id), query={"filter": filter, "format": format, "order": order, "schema": schema, "search": search, "since": since}, options=options)
+        return self._t.call(
+            _TABLE_EXPORT,
+            path=(project_id, table_id),
+            query={
+                "filter": filter,
+                "format": format,
+                "order": order,
+                "schema": schema,
+                "search": search,
+                "since": since,
+            },
+            options=options,
+        )
 
-    def list(self, project_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesResponse200:
+    def list(
+        self,
+        project_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesResponse200:
         """List tables
 
         Raises:
@@ -695,9 +1285,28 @@ class TableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_LIST, path=(project_id,), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return self._t.call(
+            _TABLE_LIST,
+            path=(project_id,),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    def restore(self, project_id: str, table_id: str, body: CreateProjectsTablesRestoreRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def restore(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesRestoreRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Restore deleted table
 
         Raises:
@@ -718,9 +1327,13 @@ class TableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_RESTORE, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _TABLE_RESTORE, path=(project_id, table_id), body=body, options=options
+        )
 
-    def retrieve(self, project_id: str, table_id: str, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def retrieve(
+        self, project_id: str, table_id: str, *, options: RequestOptions | None = None
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Get table
 
         Raises:
@@ -739,9 +1352,18 @@ class TableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_RETRIEVE, path=(project_id, table_id), options=options)
+        return self._t.call(
+            _TABLE_RETRIEVE, path=(project_id, table_id), options=options
+        )
 
-    def update(self, project_id: str, table_id: str, body: UpdateProjectsTableRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def update(
+        self,
+        project_id: str,
+        table_id: str,
+        body: UpdateProjectsTableRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Update table
 
         Raises:
@@ -761,14 +1383,18 @@ class TableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_UPDATE, path=(project_id, table_id), body=body, options=options)
+        return self._t.call(
+            _TABLE_UPDATE, path=(project_id, table_id), body=body, options=options
+        )
 
 
 class TableTemplateResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def create(self, body: CreateTableTemplateRequest, *, options: RequestOptions | None = None) -> GetProjectsTableTemplateResponse200:
+    def create(
+        self, body: CreateTableTemplateRequest, *, options: RequestOptions | None = None
+    ) -> GetProjectsTableTemplateResponse200:
         """Create table template
 
         Raises:
@@ -789,7 +1415,9 @@ class TableTemplateResource:
         """
         return self._t.call(_TABLE_TEMPLATE_CREATE, body=body, options=options)
 
-    def delete(self, template_id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    def delete(
+        self, template_id: str, *, options: RequestOptions | None = None
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete table template
 
         Raises:
@@ -808,9 +1436,22 @@ class TableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_TEMPLATE_DELETE, path=(template_id,), options=options)
+        return self._t.call(
+            _TABLE_TEMPLATE_DELETE, path=(template_id,), options=options
+        )
 
-    def list_mine(self, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, select: str | None = None, options: RequestOptions | None = None) -> ListProjectsTableTemplatesResponse200:
+    def list_mine(
+        self,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        select: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTableTemplatesResponse200:
         """List my table templates
 
         Raises:
@@ -829,9 +1470,32 @@ class TableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_TEMPLATE_LIST_MINE, query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q, "select": select}, options=options)
+        return self._t.call(
+            _TABLE_TEMPLATE_LIST_MINE,
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+                "select": select,
+            },
+            options=options,
+        )
 
-    def project_list(self, project_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTableTemplatesResponse200:
+    def project_list(
+        self,
+        project_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTableTemplatesResponse200:
         """Browse table templates
 
         Raises:
@@ -850,9 +1514,27 @@ class TableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_TEMPLATE_PROJECT_LIST, path=(project_id,), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return self._t.call(
+            _TABLE_TEMPLATE_PROJECT_LIST,
+            path=(project_id,),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    def project_retrieve(self, project_id: str, template_id: str, *, options: RequestOptions | None = None) -> GetProjectsTableTemplateResponse200:
+    def project_retrieve(
+        self,
+        project_id: str,
+        template_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetProjectsTableTemplateResponse200:
         """Preview table template
 
         Read through a cache: usually fresh within 120s, never staler than 600s.
@@ -873,9 +1555,19 @@ class TableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_TEMPLATE_PROJECT_RETRIEVE, path=(project_id, template_id), options=options)
+        return self._t.call(
+            _TABLE_TEMPLATE_PROJECT_RETRIEVE,
+            path=(project_id, template_id),
+            options=options,
+        )
 
-    def update(self, template_id: str, body: UpdateTableTemplateRequest, *, options: RequestOptions | None = None) -> GetProjectsTableTemplateResponse200:
+    def update(
+        self,
+        template_id: str,
+        body: UpdateTableTemplateRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetProjectsTableTemplateResponse200:
         """Update table template
 
         Raises:
@@ -894,9 +1586,18 @@ class TableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_TEMPLATE_UPDATE, path=(template_id,), body=body, options=options)
+        return self._t.call(
+            _TABLE_TEMPLATE_UPDATE, path=(template_id,), body=body, options=options
+        )
 
-    def use(self, project_id: str, template_id: str, body: CreateProjectsTableTemplatesUseRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    def use(
+        self,
+        project_id: str,
+        template_id: str,
+        body: CreateProjectsTableTemplatesUseRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Create table from template
 
         Raises:
@@ -916,14 +1617,25 @@ class TableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_TABLE_TEMPLATE_USE, path=(project_id, template_id), body=body, options=options)
+        return self._t.call(
+            _TABLE_TEMPLATE_USE,
+            path=(project_id, template_id),
+            body=body,
+            options=options,
+        )
 
 
 class WebhookResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
 
-    def create(self, organization_id: str, body: CreateOrganizationsWebhookRequest, *, options: RequestOptions | None = None) -> CreateOrganizationsWebhookResponse201:
+    def create(
+        self,
+        organization_id: str,
+        body: CreateOrganizationsWebhookRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateOrganizationsWebhookResponse201:
         """Create webhook
 
         Raises:
@@ -942,9 +1654,13 @@ class WebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_WEBHOOK_CREATE, path=(organization_id,), body=body, options=options)
+        return self._t.call(
+            _WEBHOOK_CREATE, path=(organization_id,), body=body, options=options
+        )
 
-    def delete(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    def delete(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete webhook
 
         Raises:
@@ -963,9 +1679,24 @@ class WebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_WEBHOOK_DELETE, path=(organization_id, id), options=options)
+        return self._t.call(
+            _WEBHOOK_DELETE, path=(organization_id, id), options=options
+        )
 
-    def deliveries(self, organization_id: str, id: str, *, cursor: str | None = None, event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"] | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, status: Literal["pending", "success", "failed"] | None = None, options: RequestOptions | None = None) -> ListOrganizationsWebhooksDeliveriesResponse200:
+    def deliveries(
+        self,
+        organization_id: str,
+        id: str,
+        *,
+        cursor: str | None = None,
+        event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"]
+        | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        status: Literal["pending", "success", "failed"] | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListOrganizationsWebhooksDeliveriesResponse200:
         """List webhook deliveries
 
         Raises:
@@ -984,9 +1715,32 @@ class WebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_WEBHOOK_DELIVERIES, path=(organization_id, id), query={"cursor": cursor, "event": event, "limit": limit, "order": order, "page": page, "status": status}, options=options)
+        return self._t.call(
+            _WEBHOOK_DELIVERIES,
+            path=(organization_id, id),
+            query={
+                "cursor": cursor,
+                "event": event,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "status": status,
+            },
+            options=options,
+        )
 
-    def list(self, organization_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListOrganizationsWebhooksResponse200:
+    def list(
+        self,
+        organization_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListOrganizationsWebhooksResponse200:
         """List webhooks
 
         Raises:
@@ -1005,9 +1759,23 @@ class WebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_WEBHOOK_LIST, path=(organization_id,), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return self._t.call(
+            _WEBHOOK_LIST,
+            path=(organization_id,),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    def retrieve(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> GetOrganizationsWebhookResponse200:
+    def retrieve(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> GetOrganizationsWebhookResponse200:
         """Get webhook
 
         Raises:
@@ -1026,9 +1794,13 @@ class WebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_WEBHOOK_RETRIEVE, path=(organization_id, id), options=options)
+        return self._t.call(
+            _WEBHOOK_RETRIEVE, path=(organization_id, id), options=options
+        )
 
-    def rotate_secret(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> CreateOrganizationsWebhookResponse201:
+    def rotate_secret(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> CreateOrganizationsWebhookResponse201:
         """Rotate webhook secret
 
         Raises:
@@ -1047,9 +1819,13 @@ class WebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_WEBHOOK_ROTATE_SECRET, path=(organization_id, id), options=options)
+        return self._t.call(
+            _WEBHOOK_ROTATE_SECRET, path=(organization_id, id), options=options
+        )
 
-    def test(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> CreateOrganizationsWebhooksTestResponse200:
+    def test(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> CreateOrganizationsWebhooksTestResponse200:
         """Send test webhook
 
         Raises:
@@ -1070,7 +1846,14 @@ class WebhookResource:
         """
         return self._t.call(_WEBHOOK_TEST, path=(organization_id, id), options=options)
 
-    def update(self, organization_id: str, id: str, body: UpdateOrganizationsWebhookRequest, *, options: RequestOptions | None = None) -> GetOrganizationsWebhookResponse200:
+    def update(
+        self,
+        organization_id: str,
+        id: str,
+        body: UpdateOrganizationsWebhookRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetOrganizationsWebhookResponse200:
         """Update webhook
 
         Raises:
@@ -1089,14 +1872,18 @@ class WebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return self._t.call(_WEBHOOK_UPDATE, path=(organization_id, id), body=body, options=options)
+        return self._t.call(
+            _WEBHOOK_UPDATE, path=(organization_id, id), body=body, options=options
+        )
 
 
 class AsyncBatchDownloadResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def csv(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> str:
+    async def csv(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> str:
         """Download batch CSV
 
         Raises:
@@ -1115,9 +1902,13 @@ class AsyncBatchDownloadResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_BATCH_DOWNLOAD_CSV, path=(project_id, batch_id), options=options)
+        return await self._t.call(
+            _BATCH_DOWNLOAD_CSV, path=(project_id, batch_id), options=options
+        )
 
-    async def json(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> ListProjectsBatchesDownloadJsonResponse200:
+    async def json(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> ListProjectsBatchesDownloadJsonResponse200:
         """Download batch JSON
 
         Raises:
@@ -1136,9 +1927,13 @@ class AsyncBatchDownloadResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_BATCH_DOWNLOAD_JSON, path=(project_id, batch_id), options=options)
+        return await self._t.call(
+            _BATCH_DOWNLOAD_JSON, path=(project_id, batch_id), options=options
+        )
 
-    async def xlsx(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> bytes:
+    async def xlsx(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> bytes:
         """Download batch XLSX
 
         Raises:
@@ -1157,7 +1952,9 @@ class AsyncBatchDownloadResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_BATCH_DOWNLOAD_XLSX, path=(project_id, batch_id), options=options)
+        return await self._t.call(
+            _BATCH_DOWNLOAD_XLSX, path=(project_id, batch_id), options=options
+        )
 
 
 class AsyncBatchResource:
@@ -1165,7 +1962,20 @@ class AsyncBatchResource:
         self._t = transport
         self.download = AsyncBatchDownloadResource(transport)
 
-    async def list(self, project_id: str, *, cursor: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, status: Literal["uploading", "processing", "merging", "complete", "partial", "failed"] | None = None, options: RequestOptions | None = None) -> ListProjectsBatchesResponse200:
+    async def list(
+        self,
+        project_id: str,
+        *,
+        cursor: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        status: Literal[
+            "uploading", "processing", "merging", "complete", "partial", "failed"
+        ]
+        | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsBatchesResponse200:
         """List batches
 
         Raises:
@@ -1184,9 +1994,22 @@ class AsyncBatchResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_BATCH_LIST, path=(project_id,), query={"cursor": cursor, "limit": limit, "order": order, "page": page, "status": status}, options=options)
+        return await self._t.call(
+            _BATCH_LIST,
+            path=(project_id,),
+            query={
+                "cursor": cursor,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "status": status,
+            },
+            options=options,
+        )
 
-    async def retrieve(self, project_id: str, batch_id: str, *, options: RequestOptions | None = None) -> GetProjectsBatcheResponse200:
+    async def retrieve(
+        self, project_id: str, batch_id: str, *, options: RequestOptions | None = None
+    ) -> GetProjectsBatcheResponse200:
         """Get batch
 
         Raises:
@@ -1205,14 +2028,23 @@ class AsyncBatchResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_BATCH_RETRIEVE, path=(project_id, batch_id), options=options)
+        return await self._t.call(
+            _BATCH_RETRIEVE, path=(project_id, batch_id), options=options
+        )
 
 
 class AsyncColumnResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def add(self, project_id: str, table_id: str, body: CreateProjectsTablesColumnRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def add(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesColumnRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Add column
 
         Raises:
@@ -1233,9 +2065,20 @@ class AsyncColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_COLUMN_ADD, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _COLUMN_ADD, path=(project_id, table_id), body=body, options=options
+        )
 
-    async def distinct(self, project_id: str, table_id: str, col_id: str, *, limit: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesColumnsDistinctResponse200:
+    async def distinct(
+        self,
+        project_id: str,
+        table_id: str,
+        col_id: str,
+        *,
+        limit: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesColumnsDistinctResponse200:
         """Get distinct column values
 
         Raises:
@@ -1255,9 +2098,21 @@ class AsyncColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_COLUMN_DISTINCT, path=(project_id, table_id, col_id), query={"limit": limit, "q": q}, options=options)
+        return await self._t.call(
+            _COLUMN_DISTINCT,
+            path=(project_id, table_id, col_id),
+            query={"limit": limit, "q": q},
+            options=options,
+        )
 
-    async def remove(self, project_id: str, table_id: str, col_id: str, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def remove(
+        self,
+        project_id: str,
+        table_id: str,
+        col_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Remove column
 
         Raises:
@@ -1278,9 +2133,18 @@ class AsyncColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_COLUMN_REMOVE, path=(project_id, table_id, col_id), options=options)
+        return await self._t.call(
+            _COLUMN_REMOVE, path=(project_id, table_id, col_id), options=options
+        )
 
-    async def reorder(self, project_id: str, table_id: str, body: ReplaceProjectsTablesColumnRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def reorder(
+        self,
+        project_id: str,
+        table_id: str,
+        body: ReplaceProjectsTablesColumnRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Reorder columns
 
         Raises:
@@ -1301,9 +2165,19 @@ class AsyncColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_COLUMN_REORDER, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _COLUMN_REORDER, path=(project_id, table_id), body=body, options=options
+        )
 
-    async def update(self, project_id: str, table_id: str, col_id: str, body: UpdateProjectsTablesColumnRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def update(
+        self,
+        project_id: str,
+        table_id: str,
+        col_id: str,
+        body: UpdateProjectsTablesColumnRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Update column
 
         Raises:
@@ -1324,14 +2198,21 @@ class AsyncColumnResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_COLUMN_UPDATE, path=(project_id, table_id, col_id), body=body, options=options)
+        return await self._t.call(
+            _COLUMN_UPDATE,
+            path=(project_id, table_id, col_id),
+            body=body,
+            options=options,
+        )
 
 
 class AsyncExportResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def retrieve(self, project_id: str, export_id: str, *, options: RequestOptions | None = None) -> GetProjectsExportResponse200:
+    async def retrieve(
+        self, project_id: str, export_id: str, *, options: RequestOptions | None = None
+    ) -> GetProjectsExportResponse200:
         """Get export status
 
         Raises:
@@ -1350,14 +2231,23 @@ class AsyncExportResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_EXPORT_RETRIEVE, path=(project_id, export_id), options=options)
+        return await self._t.call(
+            _EXPORT_RETRIEVE, path=(project_id, export_id), options=options
+        )
 
 
 class AsyncExtractTableResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def once(self, project_id: str, table_id: str, body: ExtractTableOnceBody, *, options: RequestOptions | None = None) -> CreateProjectsExtractResponse200:
+    async def once(
+        self,
+        project_id: str,
+        table_id: str,
+        body: ExtractTableOnceBody,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsExtractResponse200:
         """Extract into table (JSON response)
 
         Raises:
@@ -1377,9 +2267,19 @@ class AsyncExtractTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_EXTRACT_TABLE_ONCE, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _EXTRACT_TABLE_ONCE, path=(project_id, table_id), body=body, options=options
+        )
 
-    async def stream(self, project_id: str, table_id: str, body: ExtractTableStreamBody, *, last_event_id: str | None = None, options: RequestOptions | None = None) -> EventStream[str]:
+    async def stream(
+        self,
+        project_id: str,
+        table_id: str,
+        body: ExtractTableStreamBody,
+        *,
+        last_event_id: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> EventStream[str]:
         """Extract into table (SSE stream)
 
         Opens the stream: an error status raises before any event. No timeout bounds it after that;
@@ -1402,7 +2302,13 @@ class AsyncExtractTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.sse(_EXTRACT_TABLE_STREAM, path=(project_id, table_id), body=body, last_event_id=last_event_id, options=options)
+        return await self._t.sse(
+            _EXTRACT_TABLE_STREAM,
+            path=(project_id, table_id),
+            body=body,
+            last_event_id=last_event_id,
+            options=options,
+        )
 
 
 class AsyncExtractResource:
@@ -1410,7 +2316,13 @@ class AsyncExtractResource:
         self._t = transport
         self.table = AsyncExtractTableResource(transport)
 
-    async def once(self, project_id: str, body: ExtractOnceBody, *, options: RequestOptions | None = None) -> CreateProjectsExtractResponse200:
+    async def once(
+        self,
+        project_id: str,
+        body: ExtractOnceBody,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsExtractResponse200:
         """Extract data from text or file (JSON response)
 
         Raises:
@@ -1429,9 +2341,18 @@ class AsyncExtractResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_EXTRACT_ONCE, path=(project_id,), body=body, options=options)
+        return await self._t.call(
+            _EXTRACT_ONCE, path=(project_id,), body=body, options=options
+        )
 
-    async def stream(self, project_id: str, body: ExtractStreamBody, *, last_event_id: str | None = None, options: RequestOptions | None = None) -> EventStream[str]:
+    async def stream(
+        self,
+        project_id: str,
+        body: ExtractStreamBody,
+        *,
+        last_event_id: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> EventStream[str]:
         """Extract data from text or file (SSE stream)
 
         Opens the stream: an error status raises before any event. No timeout bounds it after that;
@@ -1453,14 +2374,28 @@ class AsyncExtractResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.sse(_EXTRACT_STREAM, path=(project_id,), body=body, last_event_id=last_event_id, options=options)
+        return await self._t.sse(
+            _EXTRACT_STREAM,
+            path=(project_id,),
+            body=body,
+            last_event_id=last_event_id,
+            options=options,
+        )
 
 
 class AsyncRowResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def aggregate(self, project_id: str, table_id: str, *, aggs: str, filter: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesRowsResponse20021d74b:
+    async def aggregate(
+        self,
+        project_id: str,
+        table_id: str,
+        *,
+        aggs: str,
+        filter: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesRowsResponse20021d74b:
         """Aggregate column values
 
         Raises:
@@ -1480,9 +2415,21 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_AGGREGATE, path=(project_id, table_id), query={"aggs": aggs, "filter": filter}, options=options)
+        return await self._t.call(
+            _ROW_AGGREGATE,
+            path=(project_id, table_id),
+            query={"aggs": aggs, "filter": filter},
+            options=options,
+        )
 
-    async def bulk(self, project_id: str, table_id: str, body: CreateProjectsTablesRowRequestDbbb57, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowResponse200:
+    async def bulk(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesRowRequestDbbb57,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowResponse200:
         """Bulk create/update/delete rows
 
         Raises:
@@ -1502,9 +2449,18 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_BULK, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _ROW_BULK, path=(project_id, table_id), body=body, options=options
+        )
 
-    async def create(self, project_id: str, table_id: str, body: CreateProjectsTablesRowRequest, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowRequest:
+    async def create(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesRowRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowRequest:
         """Create row
 
         Raises:
@@ -1524,9 +2480,18 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_CREATE, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _ROW_CREATE, path=(project_id, table_id), body=body, options=options
+        )
 
-    async def delete(self, project_id: str, table_id: str, row_id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    async def delete(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete row
 
         Raises:
@@ -1546,9 +2511,23 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_DELETE, path=(project_id, table_id, row_id), options=options)
+        return await self._t.call(
+            _ROW_DELETE, path=(project_id, table_id, row_id), options=options
+        )
 
-    async def list(self, project_id: str, table_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesRowsResponse200:
+    async def list(
+        self,
+        project_id: str,
+        table_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesRowsResponse200:
         """List rows
 
         Raises:
@@ -1568,9 +2547,28 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_LIST, path=(project_id, table_id), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return await self._t.call(
+            _ROW_LIST,
+            path=(project_id, table_id),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    async def retrieve(self, project_id: str, table_id: str, row_id: str, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowRequest:
+    async def retrieve(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowRequest:
         """Get row
 
         Raises:
@@ -1590,9 +2588,19 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_RETRIEVE, path=(project_id, table_id, row_id), options=options)
+        return await self._t.call(
+            _ROW_RETRIEVE, path=(project_id, table_id, row_id), options=options
+        )
 
-    async def source(self, project_id: str, table_id: str, row_id: str, *, disposition: Literal["attachment", "inline"] | None = None, options: RequestOptions | None = None) -> bytes:
+    async def source(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        *,
+        disposition: Literal["attachment", "inline"] | None = None,
+        options: RequestOptions | None = None,
+    ) -> bytes:
         """The source file behind a row: download it, or open a PDF or image inline
 
         Raises:
@@ -1612,9 +2620,22 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_SOURCE, path=(project_id, table_id, row_id), query={"disposition": disposition}, options=options)
+        return await self._t.call(
+            _ROW_SOURCE,
+            path=(project_id, table_id, row_id),
+            query={"disposition": disposition},
+            options=options,
+        )
 
-    async def update(self, project_id: str, table_id: str, row_id: str, body: CreateProjectsTablesRowRequest, *, options: RequestOptions | None = None) -> CreateProjectsTablesRowRequest:
+    async def update(
+        self,
+        project_id: str,
+        table_id: str,
+        row_id: str,
+        body: CreateProjectsTablesRowRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTablesRowRequest:
         """Update row
 
         Raises:
@@ -1634,14 +2655,22 @@ class AsyncRowResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_ROW_UPDATE, path=(project_id, table_id, row_id), body=body, options=options)
+        return await self._t.call(
+            _ROW_UPDATE, path=(project_id, table_id, row_id), body=body, options=options
+        )
 
 
 class AsyncSuggestResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def schema(self, project_id: str, body: SuggestSchemaBody, *, options: RequestOptions | None = None) -> CreateProjectsSuggestSchemaResponse200:
+    async def schema(
+        self,
+        project_id: str,
+        body: SuggestSchemaBody,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsSuggestSchemaResponse200:
         """Suggest schema from text or file (multipart)
 
         Raises:
@@ -1660,14 +2689,22 @@ class AsyncSuggestResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_SUGGEST_SCHEMA, path=(project_id,), body=body, options=options)
+        return await self._t.call(
+            _SUGGEST_SCHEMA, path=(project_id,), body=body, options=options
+        )
 
 
 class AsyncTableResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def create(self, project_id: str, body: CreateProjectsTableRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def create(
+        self,
+        project_id: str,
+        body: CreateProjectsTableRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Create table
 
         Raises:
@@ -1686,9 +2723,13 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_CREATE, path=(project_id,), body=body, options=options)
+        return await self._t.call(
+            _TABLE_CREATE, path=(project_id,), body=body, options=options
+        )
 
-    async def delete(self, project_id: str, table_id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    async def delete(
+        self, project_id: str, table_id: str, *, options: RequestOptions | None = None
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete table (soft, 72h grace)
 
         Raises:
@@ -1707,9 +2748,18 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_DELETE, path=(project_id, table_id), options=options)
+        return await self._t.call(
+            _TABLE_DELETE, path=(project_id, table_id), options=options
+        )
 
-    async def duplicate(self, project_id: str, table_id: str, body: CreateProjectsTablesDuplicateRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def duplicate(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesDuplicateRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Duplicate table structure
 
         Raises:
@@ -1729,9 +2779,23 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_DUPLICATE, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _TABLE_DUPLICATE, path=(project_id, table_id), body=body, options=options
+        )
 
-    async def export(self, project_id: str, table_id: str, *, filter: str | None = None, format: Literal["csv", "json", "xlsx"], order: str | None = None, schema: Literal["true", "false"] | None = None, search: str | None = None, since: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesExportResponse200:
+    async def export(
+        self,
+        project_id: str,
+        table_id: str,
+        *,
+        filter: str | None = None,
+        format: Literal["csv", "json", "xlsx"],
+        order: str | None = None,
+        schema: Literal["true", "false"] | None = None,
+        search: str | None = None,
+        since: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesExportResponse200:
         """Export table rows
 
         Raises:
@@ -1751,9 +2815,32 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_EXPORT, path=(project_id, table_id), query={"filter": filter, "format": format, "order": order, "schema": schema, "search": search, "since": since}, options=options)
+        return await self._t.call(
+            _TABLE_EXPORT,
+            path=(project_id, table_id),
+            query={
+                "filter": filter,
+                "format": format,
+                "order": order,
+                "schema": schema,
+                "search": search,
+                "since": since,
+            },
+            options=options,
+        )
 
-    async def list(self, project_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTablesResponse200:
+    async def list(
+        self,
+        project_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTablesResponse200:
         """List tables
 
         Raises:
@@ -1772,9 +2859,28 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_LIST, path=(project_id,), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return await self._t.call(
+            _TABLE_LIST,
+            path=(project_id,),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    async def restore(self, project_id: str, table_id: str, body: CreateProjectsTablesRestoreRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def restore(
+        self,
+        project_id: str,
+        table_id: str,
+        body: CreateProjectsTablesRestoreRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Restore deleted table
 
         Raises:
@@ -1795,9 +2901,13 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_RESTORE, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _TABLE_RESTORE, path=(project_id, table_id), body=body, options=options
+        )
 
-    async def retrieve(self, project_id: str, table_id: str, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def retrieve(
+        self, project_id: str, table_id: str, *, options: RequestOptions | None = None
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Get table
 
         Raises:
@@ -1816,9 +2926,18 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_RETRIEVE, path=(project_id, table_id), options=options)
+        return await self._t.call(
+            _TABLE_RETRIEVE, path=(project_id, table_id), options=options
+        )
 
-    async def update(self, project_id: str, table_id: str, body: UpdateProjectsTableRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def update(
+        self,
+        project_id: str,
+        table_id: str,
+        body: UpdateProjectsTableRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Update table
 
         Raises:
@@ -1838,14 +2957,18 @@ class AsyncTableResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_UPDATE, path=(project_id, table_id), body=body, options=options)
+        return await self._t.call(
+            _TABLE_UPDATE, path=(project_id, table_id), body=body, options=options
+        )
 
 
 class AsyncTableTemplateResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def create(self, body: CreateTableTemplateRequest, *, options: RequestOptions | None = None) -> GetProjectsTableTemplateResponse200:
+    async def create(
+        self, body: CreateTableTemplateRequest, *, options: RequestOptions | None = None
+    ) -> GetProjectsTableTemplateResponse200:
         """Create table template
 
         Raises:
@@ -1866,7 +2989,9 @@ class AsyncTableTemplateResource:
         """
         return await self._t.call(_TABLE_TEMPLATE_CREATE, body=body, options=options)
 
-    async def delete(self, template_id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    async def delete(
+        self, template_id: str, *, options: RequestOptions | None = None
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete table template
 
         Raises:
@@ -1885,9 +3010,22 @@ class AsyncTableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_TEMPLATE_DELETE, path=(template_id,), options=options)
+        return await self._t.call(
+            _TABLE_TEMPLATE_DELETE, path=(template_id,), options=options
+        )
 
-    async def list_mine(self, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, select: str | None = None, options: RequestOptions | None = None) -> ListProjectsTableTemplatesResponse200:
+    async def list_mine(
+        self,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        select: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTableTemplatesResponse200:
         """List my table templates
 
         Raises:
@@ -1906,9 +3044,32 @@ class AsyncTableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_TEMPLATE_LIST_MINE, query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q, "select": select}, options=options)
+        return await self._t.call(
+            _TABLE_TEMPLATE_LIST_MINE,
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+                "select": select,
+            },
+            options=options,
+        )
 
-    async def project_list(self, project_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListProjectsTableTemplatesResponse200:
+    async def project_list(
+        self,
+        project_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListProjectsTableTemplatesResponse200:
         """Browse table templates
 
         Raises:
@@ -1927,9 +3088,27 @@ class AsyncTableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_TEMPLATE_PROJECT_LIST, path=(project_id,), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return await self._t.call(
+            _TABLE_TEMPLATE_PROJECT_LIST,
+            path=(project_id,),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    async def project_retrieve(self, project_id: str, template_id: str, *, options: RequestOptions | None = None) -> GetProjectsTableTemplateResponse200:
+    async def project_retrieve(
+        self,
+        project_id: str,
+        template_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetProjectsTableTemplateResponse200:
         """Preview table template
 
         Read through a cache: usually fresh within 120s, never staler than 600s.
@@ -1950,9 +3129,19 @@ class AsyncTableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_TEMPLATE_PROJECT_RETRIEVE, path=(project_id, template_id), options=options)
+        return await self._t.call(
+            _TABLE_TEMPLATE_PROJECT_RETRIEVE,
+            path=(project_id, template_id),
+            options=options,
+        )
 
-    async def update(self, template_id: str, body: UpdateTableTemplateRequest, *, options: RequestOptions | None = None) -> GetProjectsTableTemplateResponse200:
+    async def update(
+        self,
+        template_id: str,
+        body: UpdateTableTemplateRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetProjectsTableTemplateResponse200:
         """Update table template
 
         Raises:
@@ -1971,9 +3160,18 @@ class AsyncTableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_TEMPLATE_UPDATE, path=(template_id,), body=body, options=options)
+        return await self._t.call(
+            _TABLE_TEMPLATE_UPDATE, path=(template_id,), body=body, options=options
+        )
 
-    async def use(self, project_id: str, template_id: str, body: CreateProjectsTableTemplatesUseRequest, *, options: RequestOptions | None = None) -> CreateProjectsTableTemplatesUseResponse201:
+    async def use(
+        self,
+        project_id: str,
+        template_id: str,
+        body: CreateProjectsTableTemplatesUseRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateProjectsTableTemplatesUseResponse201:
         """Create table from template
 
         Raises:
@@ -1993,14 +3191,25 @@ class AsyncTableTemplateResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_TABLE_TEMPLATE_USE, path=(project_id, template_id), body=body, options=options)
+        return await self._t.call(
+            _TABLE_TEMPLATE_USE,
+            path=(project_id, template_id),
+            body=body,
+            options=options,
+        )
 
 
 class AsyncWebhookResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
 
-    async def create(self, organization_id: str, body: CreateOrganizationsWebhookRequest, *, options: RequestOptions | None = None) -> CreateOrganizationsWebhookResponse201:
+    async def create(
+        self,
+        organization_id: str,
+        body: CreateOrganizationsWebhookRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> CreateOrganizationsWebhookResponse201:
         """Create webhook
 
         Raises:
@@ -2019,9 +3228,13 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_CREATE, path=(organization_id,), body=body, options=options)
+        return await self._t.call(
+            _WEBHOOK_CREATE, path=(organization_id,), body=body, options=options
+        )
 
-    async def delete(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> DeleteOrganizationsWebhookResponse200:
+    async def delete(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> DeleteOrganizationsWebhookResponse200:
         """Delete webhook
 
         Raises:
@@ -2040,9 +3253,24 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_DELETE, path=(organization_id, id), options=options)
+        return await self._t.call(
+            _WEBHOOK_DELETE, path=(organization_id, id), options=options
+        )
 
-    async def deliveries(self, organization_id: str, id: str, *, cursor: str | None = None, event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"] | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, status: Literal["pending", "success", "failed"] | None = None, options: RequestOptions | None = None) -> ListOrganizationsWebhooksDeliveriesResponse200:
+    async def deliveries(
+        self,
+        organization_id: str,
+        id: str,
+        *,
+        cursor: str | None = None,
+        event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"]
+        | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        status: Literal["pending", "success", "failed"] | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListOrganizationsWebhooksDeliveriesResponse200:
         """List webhook deliveries
 
         Raises:
@@ -2061,9 +3289,32 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_DELIVERIES, path=(organization_id, id), query={"cursor": cursor, "event": event, "limit": limit, "order": order, "page": page, "status": status}, options=options)
+        return await self._t.call(
+            _WEBHOOK_DELIVERIES,
+            path=(organization_id, id),
+            query={
+                "cursor": cursor,
+                "event": event,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "status": status,
+            },
+            options=options,
+        )
 
-    async def list(self, organization_id: str, *, cursor: str | None = None, filter: str | None = None, limit: int | None = None, order: str | None = None, page: int | None = None, q: str | None = None, options: RequestOptions | None = None) -> ListOrganizationsWebhooksResponse200:
+    async def list(
+        self,
+        organization_id: str,
+        *,
+        cursor: str | None = None,
+        filter: str | None = None,
+        limit: int | None = None,
+        order: str | None = None,
+        page: int | None = None,
+        q: str | None = None,
+        options: RequestOptions | None = None,
+    ) -> ListOrganizationsWebhooksResponse200:
         """List webhooks
 
         Raises:
@@ -2082,9 +3333,23 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_LIST, path=(organization_id,), query={"cursor": cursor, "filter": filter, "limit": limit, "order": order, "page": page, "q": q}, options=options)
+        return await self._t.call(
+            _WEBHOOK_LIST,
+            path=(organization_id,),
+            query={
+                "cursor": cursor,
+                "filter": filter,
+                "limit": limit,
+                "order": order,
+                "page": page,
+                "q": q,
+            },
+            options=options,
+        )
 
-    async def retrieve(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> GetOrganizationsWebhookResponse200:
+    async def retrieve(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> GetOrganizationsWebhookResponse200:
         """Get webhook
 
         Raises:
@@ -2103,9 +3368,13 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_RETRIEVE, path=(organization_id, id), options=options)
+        return await self._t.call(
+            _WEBHOOK_RETRIEVE, path=(organization_id, id), options=options
+        )
 
-    async def rotate_secret(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> CreateOrganizationsWebhookResponse201:
+    async def rotate_secret(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> CreateOrganizationsWebhookResponse201:
         """Rotate webhook secret
 
         Raises:
@@ -2124,9 +3393,13 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_ROTATE_SECRET, path=(organization_id, id), options=options)
+        return await self._t.call(
+            _WEBHOOK_ROTATE_SECRET, path=(organization_id, id), options=options
+        )
 
-    async def test(self, organization_id: str, id: str, *, options: RequestOptions | None = None) -> CreateOrganizationsWebhooksTestResponse200:
+    async def test(
+        self, organization_id: str, id: str, *, options: RequestOptions | None = None
+    ) -> CreateOrganizationsWebhooksTestResponse200:
         """Send test webhook
 
         Raises:
@@ -2145,9 +3418,18 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_TEST, path=(organization_id, id), options=options)
+        return await self._t.call(
+            _WEBHOOK_TEST, path=(organization_id, id), options=options
+        )
 
-    async def update(self, organization_id: str, id: str, body: UpdateOrganizationsWebhookRequest, *, options: RequestOptions | None = None) -> GetOrganizationsWebhookResponse200:
+    async def update(
+        self,
+        organization_id: str,
+        id: str,
+        body: UpdateOrganizationsWebhookRequest,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetOrganizationsWebhookResponse200:
         """Update webhook
 
         Raises:
@@ -2166,7 +3448,9 @@ class AsyncWebhookResource:
             ServiceUnavailableError: HTTP 503
             GatewayTimeoutError: HTTP 504
         """
-        return await self._t.call(_WEBHOOK_UPDATE, path=(organization_id, id), body=body, options=options)
+        return await self._t.call(
+            _WEBHOOK_UPDATE, path=(organization_id, id), body=body, options=options
+        )
 
 
 class SDK:

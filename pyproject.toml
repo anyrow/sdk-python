@@ -4,7 +4,8 @@ version = "1.0.0"
 description = "AI-native operations platform — extract, store, review, sync. Turn any document, photo, call, email, or website into a row in your table."
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
+dependencies = ["httpx2>=2.12.0,<3"]
 authors = [{ name = "Anyrow", email = "oss@anyrow.ai" }]
 maintainers = [{ name = "Anyrow", email = "oss@anyrow.ai" }]
 keywords = [
@@ -28,7 +29,6 @@ classifiers = [
 	"Intended Audience :: Developers",
 	"License :: OSI Approved :: MIT License",
 	"Programming Language :: Python :: 3",
-	"Programming Language :: Python :: 3.10",
 	"Programming Language :: Python :: 3.11",
 	"Programming Language :: Python :: 3.12",
 	"Topic :: Office/Business",
@@ -45,4 +45,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["anyrow"]
+packages = ["src/anyrow"]
