@@ -46,3 +46,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/anyrow"]
+
+# codegen's and the release tool's bookkeeping, not part of the package
+[tool.hatch.build.targets.sdist]
+exclude = [".honey-generated.json", ".release-state.json"]
