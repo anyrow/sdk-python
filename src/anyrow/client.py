@@ -12,33 +12,35 @@ from ._honey.result import Safe
 from ._honey.send_async import AsyncTransport
 from ._honey.send_sync import SyncTransport
 from .types import (
-    CreateOrganizationsWebhookRequest,
-    CreateOrganizationsWebhookResponse201,
-    CreateOrganizationsWebhooksTestResponse200,
     CreateProjectsExtractResponse200,
     CreateProjectsSuggestSchemaResponse200,
     CreateProjectsTableRequest,
+    CreateProjectsTableResponse201,
     CreateProjectsTablesColumnRequest,
+    CreateProjectsTablesColumnResponse200,
     CreateProjectsTablesDuplicateRequest,
+    CreateProjectsTablesDuplicateResponse201,
     CreateProjectsTablesRestoreRequest,
+    CreateProjectsTablesRestoreResponse200,
     CreateProjectsTablesRowRequest,
     CreateProjectsTablesRowRequestDbbb57,
     CreateProjectsTablesRowResponse200,
     CreateProjectsTableTemplatesUseRequest,
     CreateProjectsTableTemplatesUseResponse201,
     CreateTableTemplateRequest,
-    DeleteOrganizationsWebhookResponse200,
+    CreateTableTemplateResponse201,
+    DeleteProjectsTableResponse200,
+    DeleteProjectsTablesColumnResponse200,
     ErrorKey,
     ExtractOnceBody,
     ExtractStreamBody,
     ExtractTableOnceBody,
     ExtractTableStreamBody,
-    GetOrganizationsWebhookResponse200,
+    GetOrganizationsProjectResponse200,
     GetProjectsBatcheResponse200,
     GetProjectsExportResponse200,
+    GetProjectsTableResponse200,
     GetProjectsTableTemplateResponse200,
-    ListOrganizationsWebhooksDeliveriesResponse200,
-    ListOrganizationsWebhooksResponse200,
     ListProjectsBatchesDownloadJsonResponse200,
     ListProjectsBatchesResponse200,
     ListProjectsTablesColumnsDistinctResponse200,
@@ -47,15 +49,19 @@ from .types import (
     ListProjectsTablesRowsResponse200,
     ListProjectsTablesRowsResponse20021d74b,
     ListProjectsTableTemplatesResponse200,
+    ListTableTemplatesResponse200,
     ReplaceProjectsTablesColumnRequest,
+    ReplaceProjectsTablesColumnResponse200,
     SuggestSchemaBody,
-    UpdateOrganizationsWebhookRequest,
     UpdateProjectsTableRequest,
+    UpdateProjectsTableResponse200,
     UpdateProjectsTablesColumnRequest,
+    UpdateProjectsTablesColumnResponse200,
     UpdateTableTemplateRequest,
+    UpdateTableTemplateResponse200,
 )
 
-_DEFAULTS = Defaults("/api", "Authorization", "ApiKey ", ErrorKey)
+_DEFAULTS = Defaults("https://api.anyrow.ai/api", "Authorization", "ApiKey ", ErrorKey)
 
 _BATCH_DOWNLOAD_CSV: Operation[str] = Operation(
     "GET",
@@ -75,7 +81,7 @@ _BATCH_DOWNLOAD_XLSX: Operation[bytes] = Operation(
     "/v1/projects/{project_id}/batches/{batch_id}/download/xlsx",
     ("project_id", "batch_id"),
     answer="binary",
-    accept="application/octet-stream",
+    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 )
 _BATCH_LIST: Operation[ListProjectsBatchesResponse200] = Operation(
     "GET", "/v1/projects/{project_id}/batches", ("project_id",), shape="object"
@@ -86,13 +92,17 @@ _BATCH_RETRIEVE: Operation[GetProjectsBatcheResponse200] = Operation(
     ("project_id", "batch_id"),
     shape="object",
 )
-_COLUMN_ADD: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_COLUMN_ADD: Operation[CreateProjectsTablesColumnResponse200] = Operation(
     "POST",
     "/v1/projects/{project_id}/tables/{table_id}/columns",
     ("project_id", "table_id"),
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables/:table_id",
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+    ),
 )
 _COLUMN_DISTINCT: Operation[ListProjectsTablesColumnsDistinctResponse200] = Operation(
     "GET",
@@ -100,27 +110,36 @@ _COLUMN_DISTINCT: Operation[ListProjectsTablesColumnsDistinctResponse200] = Oper
     ("project_id", "table_id", "col_id"),
     shape="object",
 )
-_COLUMN_REMOVE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_COLUMN_REMOVE: Operation[DeleteProjectsTablesColumnResponse200] = Operation(
     "DELETE",
     "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}",
     ("project_id", "table_id", "col_id"),
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables/:table_id",
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+    ),
 )
-_COLUMN_REORDER: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_COLUMN_REORDER: Operation[ReplaceProjectsTablesColumnResponse200] = Operation(
     "PUT",
     "/v1/projects/{project_id}/tables/{table_id}/columns/order",
     ("project_id", "table_id"),
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=("GET /v1/projects/:project_id/tables/:table_id",),
 )
-_COLUMN_UPDATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_COLUMN_UPDATE: Operation[UpdateProjectsTablesColumnResponse200] = Operation(
     "PATCH",
     "/v1/projects/{project_id}/tables/{table_id}/columns/{col_id}",
     ("project_id", "table_id", "col_id"),
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables/:table_id",
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+    ),
 )
 _EXPORT_RETRIEVE: Operation[GetProjectsExportResponse200] = Operation(
     "GET",
@@ -135,6 +154,10 @@ _EXTRACT_ONCE: Operation[CreateProjectsExtractResponse200] = Operation(
     body="multipart",
     content_type="multipart/form-data",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/batches",
+        "GET /v1/projects/:project_id/tables",
+    ),
 )
 _EXTRACT_STREAM: Operation[str] = Operation(
     "POST",
@@ -144,6 +167,10 @@ _EXTRACT_STREAM: Operation[str] = Operation(
     content_type="multipart/form-data",
     answer="text",
     accept="text/event-stream",
+    invalidates=(
+        "GET /v1/projects/:project_id/batches",
+        "GET /v1/projects/:project_id/tables",
+    ),
     stream="sse",
 )
 _EXTRACT_TABLE_ONCE: Operation[CreateProjectsExtractResponse200] = Operation(
@@ -153,6 +180,10 @@ _EXTRACT_TABLE_ONCE: Operation[CreateProjectsExtractResponse200] = Operation(
     body="multipart",
     content_type="multipart/form-data",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/batches",
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+    ),
 )
 _EXTRACT_TABLE_STREAM: Operation[str] = Operation(
     "POST",
@@ -162,7 +193,17 @@ _EXTRACT_TABLE_STREAM: Operation[str] = Operation(
     content_type="multipart/form-data",
     answer="text",
     accept="text/event-stream",
+    invalidates=(
+        "GET /v1/projects/:project_id/batches",
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+    ),
     stream="sse",
+)
+_PROJECT_RETRIEVE: Operation[GetOrganizationsProjectResponse200] = Operation(
+    "GET",
+    "/v1/organizations/{organization_id}/projects/{project_id}",
+    ("organization_id", "project_id"),
+    shape="object",
 )
 _ROW_AGGREGATE: Operation[ListProjectsTablesRowsResponse20021d74b] = Operation(
     "GET",
@@ -177,6 +218,10 @@ _ROW_BULK: Operation[CreateProjectsTablesRowResponse200] = Operation(
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+        "GET /v1/projects/:project_id/tables/:table_id/rows/aggregate",
+    ),
 )
 _ROW_CREATE: Operation[CreateProjectsTablesRowRequest] = Operation(
     "POST",
@@ -185,12 +230,21 @@ _ROW_CREATE: Operation[CreateProjectsTablesRowRequest] = Operation(
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+        "GET /v1/projects/:project_id/tables/:table_id/rows/aggregate",
+    ),
 )
-_ROW_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
+_ROW_DELETE: Operation[DeleteProjectsTableResponse200] = Operation(
     "DELETE",
     "/v1/projects/{project_id}/tables/{table_id}/rows/{row_id}",
     ("project_id", "table_id", "row_id"),
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+        "GET /v1/projects/:project_id/tables/:table_id/rows/:row_id",
+        "GET /v1/projects/:project_id/tables/:table_id/rows/aggregate",
+    ),
 )
 _ROW_LIST: Operation[ListProjectsTablesRowsResponse200] = Operation(
     "GET",
@@ -218,6 +272,11 @@ _ROW_UPDATE: Operation[CreateProjectsTablesRowRequest] = Operation(
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables/:table_id/rows",
+        "GET /v1/projects/:project_id/tables/:table_id/rows/:row_id",
+        "GET /v1/projects/:project_id/tables/:table_id/rows/aggregate",
+    ),
 )
 _SUGGEST_SCHEMA: Operation[CreateProjectsSuggestSchemaResponse200] = Operation(
     "POST",
@@ -227,27 +286,33 @@ _SUGGEST_SCHEMA: Operation[CreateProjectsSuggestSchemaResponse200] = Operation(
     content_type="multipart/form-data",
     shape="object",
 )
-_TABLE_CREATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_TABLE_CREATE: Operation[CreateProjectsTableResponse201] = Operation(
     "POST",
     "/v1/projects/{project_id}/tables",
     ("project_id",),
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=("GET /v1/projects/:project_id/tables",),
 )
-_TABLE_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
+_TABLE_DELETE: Operation[DeleteProjectsTableResponse200] = Operation(
     "DELETE",
     "/v1/projects/{project_id}/tables/{table_id}",
     ("project_id", "table_id"),
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables",
+        "GET /v1/projects/:project_id/tables/:table_id",
+    ),
 )
-_TABLE_DUPLICATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_TABLE_DUPLICATE: Operation[CreateProjectsTablesDuplicateResponse201] = Operation(
     "POST",
     "/v1/projects/{project_id}/tables/{table_id}/duplicate",
     ("project_id", "table_id"),
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=("GET /v1/projects/:project_id/tables",),
 )
 _TABLE_EXPORT: Operation[ListProjectsTablesExportResponse200] = Operation(
     "GET",
@@ -258,31 +323,40 @@ _TABLE_EXPORT: Operation[ListProjectsTablesExportResponse200] = Operation(
 _TABLE_LIST: Operation[ListProjectsTablesResponse200] = Operation(
     "GET", "/v1/projects/{project_id}/tables", ("project_id",), shape="object"
 )
-_TABLE_RESTORE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_TABLE_RESTORE: Operation[CreateProjectsTablesRestoreResponse200] = Operation(
     "POST",
     "/v1/projects/{project_id}/tables/{table_id}/restore",
     ("project_id", "table_id"),
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables",
+        "GET /v1/projects/:project_id/tables/:table_id",
+    ),
 )
-_TABLE_RETRIEVE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_TABLE_RETRIEVE: Operation[GetProjectsTableResponse200] = Operation(
     "GET",
     "/v1/projects/{project_id}/tables/{table_id}",
     ("project_id", "table_id"),
     shape="object",
 )
-_TABLE_TEMPLATE_CREATE: Operation[GetProjectsTableTemplateResponse200] = Operation(
+_TABLE_TEMPLATE_CREATE: Operation[CreateTableTemplateResponse201] = Operation(
     "POST",
     "/v1/table-templates",
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=("GET /v1/table-templates",),
 )
-_TABLE_TEMPLATE_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
-    "DELETE", "/v1/table-templates/{template_id}", ("template_id",), shape="object"
+_TABLE_TEMPLATE_DELETE: Operation[DeleteProjectsTableResponse200] = Operation(
+    "DELETE",
+    "/v1/table-templates/{template_id}",
+    ("template_id",),
+    shape="object",
+    invalidates=("GET /v1/table-templates", "GET /v1/table-templates/:template_id"),
 )
-_TABLE_TEMPLATE_LIST_MINE: Operation[ListProjectsTableTemplatesResponse200] = Operation(
+_TABLE_TEMPLATE_LIST_MINE: Operation[ListTableTemplatesResponse200] = Operation(
     "GET", "/v1/table-templates/mine", shape="object"
 )
 _TABLE_TEMPLATE_PROJECT_LIST: Operation[ListProjectsTableTemplatesResponse200] = (
@@ -301,13 +375,14 @@ _TABLE_TEMPLATE_PROJECT_RETRIEVE: Operation[GetProjectsTableTemplateResponse200]
         shape="object",
     )
 )
-_TABLE_TEMPLATE_UPDATE: Operation[GetProjectsTableTemplateResponse200] = Operation(
+_TABLE_TEMPLATE_UPDATE: Operation[UpdateTableTemplateResponse200] = Operation(
     "PATCH",
     "/v1/table-templates/{template_id}",
     ("template_id",),
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=("GET /v1/table-templates", "GET /v1/table-templates/:template_id"),
 )
 _TABLE_TEMPLATE_USE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
     "POST",
@@ -316,68 +391,19 @@ _TABLE_TEMPLATE_USE: Operation[CreateProjectsTableTemplatesUseResponse201] = Ope
     body="json",
     content_type="application/json",
     shape="object",
+    invalidates=("GET /v1/projects/:project_id/tables",),
 )
-_TABLE_UPDATE: Operation[CreateProjectsTableTemplatesUseResponse201] = Operation(
+_TABLE_UPDATE: Operation[UpdateProjectsTableResponse200] = Operation(
     "PATCH",
     "/v1/projects/{project_id}/tables/{table_id}",
     ("project_id", "table_id"),
     body="json",
     content_type="application/json",
     shape="object",
-)
-_WEBHOOK_CREATE: Operation[CreateOrganizationsWebhookResponse201] = Operation(
-    "POST",
-    "/v1/organizations/{organization_id}/webhooks",
-    ("organization_id",),
-    body="json",
-    content_type="application/json",
-    shape="object",
-)
-_WEBHOOK_DELETE: Operation[DeleteOrganizationsWebhookResponse200] = Operation(
-    "DELETE",
-    "/v1/organizations/{organization_id}/webhooks/{id}",
-    ("organization_id", "id"),
-    shape="object",
-)
-_WEBHOOK_DELIVERIES: Operation[ListOrganizationsWebhooksDeliveriesResponse200] = (
-    Operation(
-        "GET",
-        "/v1/organizations/{organization_id}/webhooks/{id}/deliveries",
-        ("organization_id", "id"),
-        shape="object",
-    )
-)
-_WEBHOOK_LIST: Operation[ListOrganizationsWebhooksResponse200] = Operation(
-    "GET",
-    "/v1/organizations/{organization_id}/webhooks",
-    ("organization_id",),
-    shape="object",
-)
-_WEBHOOK_RETRIEVE: Operation[GetOrganizationsWebhookResponse200] = Operation(
-    "GET",
-    "/v1/organizations/{organization_id}/webhooks/{id}",
-    ("organization_id", "id"),
-    shape="object",
-)
-_WEBHOOK_ROTATE_SECRET: Operation[CreateOrganizationsWebhookResponse201] = Operation(
-    "POST",
-    "/v1/organizations/{organization_id}/webhooks/{id}/rotate-secret",
-    ("organization_id", "id"),
-    shape="object",
-)
-_WEBHOOK_TEST: Operation[CreateOrganizationsWebhooksTestResponse200] = Operation(
-    "POST",
-    "/v1/organizations/{organization_id}/webhooks/{id}/test",
-    ("organization_id", "id"),
-    shape="object",
-)
-_WEBHOOK_UPDATE: Operation[GetOrganizationsWebhookResponse200] = Operation(
-    "PATCH",
-    "/v1/organizations/{organization_id}/webhooks/{id}",
-    ("organization_id", "id"),
-    body="json",
-    content_type="application/json",
-    shape="object",
+    invalidates=(
+        "GET /v1/projects/:project_id/tables",
+        "GET /v1/projects/:project_id/tables/:table_id",
+    ),
 )
 
 
@@ -548,7 +574,7 @@ class ColumnResource:
         body: CreateProjectsTablesColumnRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTablesColumnResponse200:
         """Add column
 
         Raises:
@@ -616,7 +642,7 @@ class ColumnResource:
         col_id: str,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> DeleteProjectsTablesColumnResponse200:
         """Remove column
 
         Raises:
@@ -648,7 +674,7 @@ class ColumnResource:
         body: ReplaceProjectsTablesColumnRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> ReplaceProjectsTablesColumnResponse200:
         """Reorder columns
 
         Raises:
@@ -681,7 +707,7 @@ class ColumnResource:
         body: UpdateProjectsTablesColumnRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> UpdateProjectsTablesColumnResponse200:
         """Update column
 
         Raises:
@@ -811,6 +837,40 @@ class ExtractResource:
         )
 
 
+class ProjectResource:
+    def __init__(self, transport: SyncTransport) -> None:
+        self._t = transport
+
+    def retrieve(
+        self,
+        organization_id: str,
+        project_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetOrganizationsProjectResponse200:
+        """Get project
+
+        Raises:
+            BadRequestError: HTTP 400
+            UnauthorizedError: HTTP 401
+            APIStatusError: HTTP 402
+            ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            APIStatusError: HTTP 413
+            APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
+            InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
+        """
+        return self._t.call(
+            _PROJECT_RETRIEVE, path=(organization_id, project_id), options=options
+        )
+
+
 class RowResource:
     def __init__(self, transport: SyncTransport) -> None:
         self._t = transport
@@ -919,7 +979,7 @@ class RowResource:
         row_id: str,
         *,
         options: RequestOptions | None = None,
-    ) -> DeleteOrganizationsWebhookResponse200:
+    ) -> DeleteProjectsTableResponse200:
         """Delete row
 
         Raises:
@@ -1132,7 +1192,7 @@ class TableResource:
         body: CreateProjectsTableRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTableResponse201:
         """Create table
 
         Raises:
@@ -1157,7 +1217,7 @@ class TableResource:
 
     def delete(
         self, project_id: str, table_id: str, *, options: RequestOptions | None = None
-    ) -> DeleteOrganizationsWebhookResponse200:
+    ) -> DeleteProjectsTableResponse200:
         """Delete table (soft, 72h grace)
 
         Raises:
@@ -1185,7 +1245,7 @@ class TableResource:
         body: CreateProjectsTablesDuplicateRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTablesDuplicateResponse201:
         """Duplicate table structure
 
         Raises:
@@ -1306,7 +1366,7 @@ class TableResource:
         body: CreateProjectsTablesRestoreRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTablesRestoreResponse200:
         """Restore deleted table
 
         Raises:
@@ -1333,7 +1393,7 @@ class TableResource:
 
     def retrieve(
         self, project_id: str, table_id: str, *, options: RequestOptions | None = None
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> GetProjectsTableResponse200:
         """Get table
 
         Raises:
@@ -1363,7 +1423,7 @@ class TableResource:
         body: UpdateProjectsTableRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> UpdateProjectsTableResponse200:
         """Update table
 
         Raises:
@@ -1394,7 +1454,7 @@ class TableTemplateResource:
 
     def create(
         self, body: CreateTableTemplateRequest, *, options: RequestOptions | None = None
-    ) -> GetProjectsTableTemplateResponse200:
+    ) -> CreateTableTemplateResponse201:
         """Create table template
 
         Raises:
@@ -1417,7 +1477,7 @@ class TableTemplateResource:
 
     def delete(
         self, template_id: str, *, options: RequestOptions | None = None
-    ) -> DeleteOrganizationsWebhookResponse200:
+    ) -> DeleteProjectsTableResponse200:
         """Delete table template
 
         Raises:
@@ -1451,7 +1511,7 @@ class TableTemplateResource:
         q: str | None = None,
         select: str | None = None,
         options: RequestOptions | None = None,
-    ) -> ListProjectsTableTemplatesResponse200:
+    ) -> ListTableTemplatesResponse200:
         """List my table templates
 
         Raises:
@@ -1567,7 +1627,7 @@ class TableTemplateResource:
         body: UpdateTableTemplateRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> GetProjectsTableTemplateResponse200:
+    ) -> UpdateTableTemplateResponse200:
         """Update table template
 
         Raises:
@@ -1622,258 +1682,6 @@ class TableTemplateResource:
             path=(project_id, template_id),
             body=body,
             options=options,
-        )
-
-
-class WebhookResource:
-    def __init__(self, transport: SyncTransport) -> None:
-        self._t = transport
-
-    def create(
-        self,
-        organization_id: str,
-        body: CreateOrganizationsWebhookRequest,
-        *,
-        options: RequestOptions | None = None,
-    ) -> CreateOrganizationsWebhookResponse201:
-        """Create webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(
-            _WEBHOOK_CREATE, path=(organization_id,), body=body, options=options
-        )
-
-    def delete(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> DeleteOrganizationsWebhookResponse200:
-        """Delete webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(
-            _WEBHOOK_DELETE, path=(organization_id, id), options=options
-        )
-
-    def deliveries(
-        self,
-        organization_id: str,
-        id: str,
-        *,
-        cursor: str | None = None,
-        event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"]
-        | None = None,
-        limit: int | None = None,
-        order: str | None = None,
-        page: int | None = None,
-        status: Literal["pending", "success", "failed"] | None = None,
-        options: RequestOptions | None = None,
-    ) -> ListOrganizationsWebhooksDeliveriesResponse200:
-        """List webhook deliveries
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(
-            _WEBHOOK_DELIVERIES,
-            path=(organization_id, id),
-            query={
-                "cursor": cursor,
-                "event": event,
-                "limit": limit,
-                "order": order,
-                "page": page,
-                "status": status,
-            },
-            options=options,
-        )
-
-    def list(
-        self,
-        organization_id: str,
-        *,
-        cursor: str | None = None,
-        filter: str | None = None,
-        limit: int | None = None,
-        order: str | None = None,
-        page: int | None = None,
-        q: str | None = None,
-        options: RequestOptions | None = None,
-    ) -> ListOrganizationsWebhooksResponse200:
-        """List webhooks
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(
-            _WEBHOOK_LIST,
-            path=(organization_id,),
-            query={
-                "cursor": cursor,
-                "filter": filter,
-                "limit": limit,
-                "order": order,
-                "page": page,
-                "q": q,
-            },
-            options=options,
-        )
-
-    def retrieve(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> GetOrganizationsWebhookResponse200:
-        """Get webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(
-            _WEBHOOK_RETRIEVE, path=(organization_id, id), options=options
-        )
-
-    def rotate_secret(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> CreateOrganizationsWebhookResponse201:
-        """Rotate webhook secret
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(
-            _WEBHOOK_ROTATE_SECRET, path=(organization_id, id), options=options
-        )
-
-    def test(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> CreateOrganizationsWebhooksTestResponse200:
-        """Send test webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(_WEBHOOK_TEST, path=(organization_id, id), options=options)
-
-    def update(
-        self,
-        organization_id: str,
-        id: str,
-        body: UpdateOrganizationsWebhookRequest,
-        *,
-        options: RequestOptions | None = None,
-    ) -> GetOrganizationsWebhookResponse200:
-        """Update webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return self._t.call(
-            _WEBHOOK_UPDATE, path=(organization_id, id), body=body, options=options
         )
 
 
@@ -2044,7 +1852,7 @@ class AsyncColumnResource:
         body: CreateProjectsTablesColumnRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTablesColumnResponse200:
         """Add column
 
         Raises:
@@ -2112,7 +1920,7 @@ class AsyncColumnResource:
         col_id: str,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> DeleteProjectsTablesColumnResponse200:
         """Remove column
 
         Raises:
@@ -2144,7 +1952,7 @@ class AsyncColumnResource:
         body: ReplaceProjectsTablesColumnRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> ReplaceProjectsTablesColumnResponse200:
         """Reorder columns
 
         Raises:
@@ -2177,7 +1985,7 @@ class AsyncColumnResource:
         body: UpdateProjectsTablesColumnRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> UpdateProjectsTablesColumnResponse200:
         """Update column
 
         Raises:
@@ -2383,6 +2191,40 @@ class AsyncExtractResource:
         )
 
 
+class AsyncProjectResource:
+    def __init__(self, transport: AsyncTransport) -> None:
+        self._t = transport
+
+    async def retrieve(
+        self,
+        organization_id: str,
+        project_id: str,
+        *,
+        options: RequestOptions | None = None,
+    ) -> GetOrganizationsProjectResponse200:
+        """Get project
+
+        Raises:
+            BadRequestError: HTTP 400
+            UnauthorizedError: HTTP 401
+            APIStatusError: HTTP 402
+            ForbiddenError: HTTP 403
+            NotFoundError: HTTP 404
+            APIStatusError: HTTP 408
+            APIStatusError: HTTP 413
+            APIStatusError: HTTP 415
+            UnprocessableEntityError: HTTP 422
+            RateLimitError: HTTP 429
+            InternalServerError: HTTP 500
+            BadGatewayError: HTTP 502
+            ServiceUnavailableError: HTTP 503
+            GatewayTimeoutError: HTTP 504
+        """
+        return await self._t.call(
+            _PROJECT_RETRIEVE, path=(organization_id, project_id), options=options
+        )
+
+
 class AsyncRowResource:
     def __init__(self, transport: AsyncTransport) -> None:
         self._t = transport
@@ -2491,7 +2333,7 @@ class AsyncRowResource:
         row_id: str,
         *,
         options: RequestOptions | None = None,
-    ) -> DeleteOrganizationsWebhookResponse200:
+    ) -> DeleteProjectsTableResponse200:
         """Delete row
 
         Raises:
@@ -2704,7 +2546,7 @@ class AsyncTableResource:
         body: CreateProjectsTableRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTableResponse201:
         """Create table
 
         Raises:
@@ -2729,7 +2571,7 @@ class AsyncTableResource:
 
     async def delete(
         self, project_id: str, table_id: str, *, options: RequestOptions | None = None
-    ) -> DeleteOrganizationsWebhookResponse200:
+    ) -> DeleteProjectsTableResponse200:
         """Delete table (soft, 72h grace)
 
         Raises:
@@ -2759,7 +2601,7 @@ class AsyncTableResource:
         body: CreateProjectsTablesDuplicateRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTablesDuplicateResponse201:
         """Duplicate table structure
 
         Raises:
@@ -2880,7 +2722,7 @@ class AsyncTableResource:
         body: CreateProjectsTablesRestoreRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> CreateProjectsTablesRestoreResponse200:
         """Restore deleted table
 
         Raises:
@@ -2907,7 +2749,7 @@ class AsyncTableResource:
 
     async def retrieve(
         self, project_id: str, table_id: str, *, options: RequestOptions | None = None
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> GetProjectsTableResponse200:
         """Get table
 
         Raises:
@@ -2937,7 +2779,7 @@ class AsyncTableResource:
         body: UpdateProjectsTableRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> CreateProjectsTableTemplatesUseResponse201:
+    ) -> UpdateProjectsTableResponse200:
         """Update table
 
         Raises:
@@ -2968,7 +2810,7 @@ class AsyncTableTemplateResource:
 
     async def create(
         self, body: CreateTableTemplateRequest, *, options: RequestOptions | None = None
-    ) -> GetProjectsTableTemplateResponse200:
+    ) -> CreateTableTemplateResponse201:
         """Create table template
 
         Raises:
@@ -2991,7 +2833,7 @@ class AsyncTableTemplateResource:
 
     async def delete(
         self, template_id: str, *, options: RequestOptions | None = None
-    ) -> DeleteOrganizationsWebhookResponse200:
+    ) -> DeleteProjectsTableResponse200:
         """Delete table template
 
         Raises:
@@ -3025,7 +2867,7 @@ class AsyncTableTemplateResource:
         q: str | None = None,
         select: str | None = None,
         options: RequestOptions | None = None,
-    ) -> ListProjectsTableTemplatesResponse200:
+    ) -> ListTableTemplatesResponse200:
         """List my table templates
 
         Raises:
@@ -3141,7 +2983,7 @@ class AsyncTableTemplateResource:
         body: UpdateTableTemplateRequest,
         *,
         options: RequestOptions | None = None,
-    ) -> GetProjectsTableTemplateResponse200:
+    ) -> UpdateTableTemplateResponse200:
         """Update table template
 
         Raises:
@@ -3199,260 +3041,6 @@ class AsyncTableTemplateResource:
         )
 
 
-class AsyncWebhookResource:
-    def __init__(self, transport: AsyncTransport) -> None:
-        self._t = transport
-
-    async def create(
-        self,
-        organization_id: str,
-        body: CreateOrganizationsWebhookRequest,
-        *,
-        options: RequestOptions | None = None,
-    ) -> CreateOrganizationsWebhookResponse201:
-        """Create webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_CREATE, path=(organization_id,), body=body, options=options
-        )
-
-    async def delete(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> DeleteOrganizationsWebhookResponse200:
-        """Delete webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_DELETE, path=(organization_id, id), options=options
-        )
-
-    async def deliveries(
-        self,
-        organization_id: str,
-        id: str,
-        *,
-        cursor: str | None = None,
-        event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"]
-        | None = None,
-        limit: int | None = None,
-        order: str | None = None,
-        page: int | None = None,
-        status: Literal["pending", "success", "failed"] | None = None,
-        options: RequestOptions | None = None,
-    ) -> ListOrganizationsWebhooksDeliveriesResponse200:
-        """List webhook deliveries
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_DELIVERIES,
-            path=(organization_id, id),
-            query={
-                "cursor": cursor,
-                "event": event,
-                "limit": limit,
-                "order": order,
-                "page": page,
-                "status": status,
-            },
-            options=options,
-        )
-
-    async def list(
-        self,
-        organization_id: str,
-        *,
-        cursor: str | None = None,
-        filter: str | None = None,
-        limit: int | None = None,
-        order: str | None = None,
-        page: int | None = None,
-        q: str | None = None,
-        options: RequestOptions | None = None,
-    ) -> ListOrganizationsWebhooksResponse200:
-        """List webhooks
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_LIST,
-            path=(organization_id,),
-            query={
-                "cursor": cursor,
-                "filter": filter,
-                "limit": limit,
-                "order": order,
-                "page": page,
-                "q": q,
-            },
-            options=options,
-        )
-
-    async def retrieve(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> GetOrganizationsWebhookResponse200:
-        """Get webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_RETRIEVE, path=(organization_id, id), options=options
-        )
-
-    async def rotate_secret(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> CreateOrganizationsWebhookResponse201:
-        """Rotate webhook secret
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_ROTATE_SECRET, path=(organization_id, id), options=options
-        )
-
-    async def test(
-        self, organization_id: str, id: str, *, options: RequestOptions | None = None
-    ) -> CreateOrganizationsWebhooksTestResponse200:
-        """Send test webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_TEST, path=(organization_id, id), options=options
-        )
-
-    async def update(
-        self,
-        organization_id: str,
-        id: str,
-        body: UpdateOrganizationsWebhookRequest,
-        *,
-        options: RequestOptions | None = None,
-    ) -> GetOrganizationsWebhookResponse200:
-        """Update webhook
-
-        Raises:
-            BadRequestError: HTTP 400
-            UnauthorizedError: HTTP 401
-            APIStatusError: HTTP 402
-            ForbiddenError: HTTP 403
-            NotFoundError: HTTP 404
-            APIStatusError: HTTP 408
-            APIStatusError: HTTP 413
-            APIStatusError: HTTP 415
-            UnprocessableEntityError: HTTP 422
-            RateLimitError: HTTP 429
-            InternalServerError: HTTP 500
-            BadGatewayError: HTTP 502
-            ServiceUnavailableError: HTTP 503
-            GatewayTimeoutError: HTTP 504
-        """
-        return await self._t.call(
-            _WEBHOOK_UPDATE, path=(organization_id, id), body=body, options=options
-        )
-
-
 class SDK:
     """The Anyrow API client, generated by honey."""
 
@@ -3462,11 +3050,11 @@ class SDK:
         self.column = ColumnResource(self._t)
         self.export = ExportResource(self._t)
         self.extract = ExtractResource(self._t)
+        self.project = ProjectResource(self._t)
         self.row = RowResource(self._t)
         self.suggest = SuggestResource(self._t)
         self.table = TableResource(self._t)
         self.table_template = TableTemplateResource(self._t)
-        self.webhook = WebhookResource(self._t)
         self.safe = SafeSDK(Safe(self._t))
 
     def is_stale(self, method: str, path: str) -> bool:
@@ -3492,11 +3080,11 @@ class AsyncSDK:
         self.column = AsyncColumnResource(self._t)
         self.export = AsyncExportResource(self._t)
         self.extract = AsyncExtractResource(self._t)
+        self.project = AsyncProjectResource(self._t)
         self.row = AsyncRowResource(self._t)
         self.suggest = AsyncSuggestResource(self._t)
         self.table = AsyncTableResource(self._t)
         self.table_template = AsyncTableTemplateResource(self._t)
-        self.webhook = AsyncWebhookResource(self._t)
         self.safe = AsyncSafeSDK(Safe(self._t))
 
     def is_stale(self, method: str, path: str) -> bool:
@@ -3564,6 +3152,13 @@ class SafeExtractResource:
     once = Safe.of_sync(ExtractResource.once)
 
 
+class SafeProjectResource:
+    def __init__(self, transport: Safe) -> None:
+        self._t = transport
+
+    retrieve = Safe.of_sync(ProjectResource.retrieve)
+
+
 class SafeRowResource:
     def __init__(self, transport: Safe) -> None:
         self._t = transport
@@ -3610,20 +3205,6 @@ class SafeTableTemplateResource:
     project_retrieve = Safe.of_sync(TableTemplateResource.project_retrieve)
     update = Safe.of_sync(TableTemplateResource.update)
     use = Safe.of_sync(TableTemplateResource.use)
-
-
-class SafeWebhookResource:
-    def __init__(self, transport: Safe) -> None:
-        self._t = transport
-
-    create = Safe.of_sync(WebhookResource.create)
-    delete = Safe.of_sync(WebhookResource.delete)
-    deliveries = Safe.of_sync(WebhookResource.deliveries)
-    list = Safe.of_sync(WebhookResource.list)
-    retrieve = Safe.of_sync(WebhookResource.retrieve)
-    rotate_secret = Safe.of_sync(WebhookResource.rotate_secret)
-    test = Safe.of_sync(WebhookResource.test)
-    update = Safe.of_sync(WebhookResource.update)
 
 
 class AsyncSafeBatchDownloadResource:
@@ -3679,6 +3260,13 @@ class AsyncSafeExtractResource:
     stream = Safe.of(AsyncExtractResource.stream)
 
 
+class AsyncSafeProjectResource:
+    def __init__(self, transport: Safe) -> None:
+        self._t = transport
+
+    retrieve = Safe.of(AsyncProjectResource.retrieve)
+
+
 class AsyncSafeRowResource:
     def __init__(self, transport: Safe) -> None:
         self._t = transport
@@ -3727,20 +3315,6 @@ class AsyncSafeTableTemplateResource:
     use = Safe.of(AsyncTableTemplateResource.use)
 
 
-class AsyncSafeWebhookResource:
-    def __init__(self, transport: Safe) -> None:
-        self._t = transport
-
-    create = Safe.of(AsyncWebhookResource.create)
-    delete = Safe.of(AsyncWebhookResource.delete)
-    deliveries = Safe.of(AsyncWebhookResource.deliveries)
-    list = Safe.of(AsyncWebhookResource.list)
-    retrieve = Safe.of(AsyncWebhookResource.retrieve)
-    rotate_secret = Safe.of(AsyncWebhookResource.rotate_secret)
-    test = Safe.of(AsyncWebhookResource.test)
-    update = Safe.of(AsyncWebhookResource.update)
-
-
 class SafeSDK:
     def __init__(self, transport: Safe) -> None:
         self._t = transport
@@ -3748,11 +3322,11 @@ class SafeSDK:
         self.column = SafeColumnResource(transport)
         self.export = SafeExportResource(transport)
         self.extract = SafeExtractResource(transport)
+        self.project = SafeProjectResource(transport)
         self.row = SafeRowResource(transport)
         self.suggest = SafeSuggestResource(transport)
         self.table = SafeTableResource(transport)
         self.table_template = SafeTableTemplateResource(transport)
-        self.webhook = SafeWebhookResource(transport)
 
 
 class AsyncSafeSDK:
@@ -3762,8 +3336,8 @@ class AsyncSafeSDK:
         self.column = AsyncSafeColumnResource(transport)
         self.export = AsyncSafeExportResource(transport)
         self.extract = AsyncSafeExtractResource(transport)
+        self.project = AsyncSafeProjectResource(transport)
         self.row = AsyncSafeRowResource(transport)
         self.suggest = AsyncSafeSuggestResource(transport)
         self.table = AsyncSafeTableResource(transport)
         self.table_template = AsyncSafeTableTemplateResource(transport)
-        self.webhook = AsyncSafeWebhookResource(transport)

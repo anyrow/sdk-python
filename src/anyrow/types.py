@@ -9,57 +9,6 @@ from typing import Any, Literal, NotRequired, TypeAlias, TypedDict
 from ._honey.body import FilePart
 
 
-class CreateOrganizationsWebhookRequest(TypedDict):
-    events: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
-    name: NotRequired[str]
-    url: str
-
-
-class CreateOrganizationsWebhookResponse201(TypedDict):
-    active: bool
-    created_at: int
-    events: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
-    failure_count: int
-    id: str
-    last_triggered_at: int | None
-    name: str | None
-    organization_id: str
-    secret: str
-    secret_rotated_at: int | None
-    updated_at: int
-    url: str
-
-
-class CreateOrganizationsWebhookResponse500(TypedDict):
-    error_key: Literal[
-        "captcha_unavailable", "internal_server_error", "webhook_create_failed"
-    ]
-    fields: dict[str, list[CreateOrganizationsWebhookResponse500FieldsValueItem]]
-    message: str
-    status: Literal[500]
-    status_key: str
-    success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
-
-
-class CreateOrganizationsWebhooksTestResponse200(TypedDict):
-    http_status: float | None
-    response_body: str | None
-    status: Literal["error", "success", "timeout"]
-
-
-class CreateOrganizationsWebhooksTestResponse500(TypedDict):
-    error_key: Literal[
-        "captcha_unavailable", "internal_server_error", "webhook_test_failed"
-    ]
-    fields: dict[str, list[CreateOrganizationsWebhooksTestResponse500FieldsValueItem]]
-    message: str
-    status: Literal[500]
-    status_key: str
-    success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
-
-
 class CreateProjectsExtractRequest(TypedDict):
     columns: NotRequired[str]
     file: NotRequired[str]
@@ -106,6 +55,27 @@ class CreateProjectsTableRequest(TypedDict):
     strictness: NotRequired[Literal["strict", "balanced", "flexible"]]
 
 
+class CreateProjectsTableResponse201(TypedDict):
+    columns_json: list[CreateProjectsTableResponse201ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
+
+
 class CreateProjectsTableResponse402(TypedDict):
     error_key: Literal[
         "api_request_limit_exceeded",
@@ -118,7 +88,7 @@ class CreateProjectsTableResponse402(TypedDict):
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateProjectsTableTemplatesUseRequest(TypedDict):
@@ -156,11 +126,11 @@ class CreateProjectsTableTemplatesUseResponse402(TypedDict):
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateProjectsTablesColumnRequest(TypedDict):
-    currency_code: NotRequired[str]
+    currency_code: NotRequired[CurrencyCode8]
     description: NotRequired[str | None]
     instruction: NotRequired[str | None]
     name: str
@@ -183,6 +153,27 @@ class CreateProjectsTablesColumnRequest(TypedDict):
     ]
 
 
+class CreateProjectsTablesColumnResponse200(TypedDict):
+    columns_json: list[CreateProjectsTablesColumnResponse200ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
+
+
 class CreateProjectsTablesColumnResponse402(TypedDict):
     error_key: Literal[
         "api_request_limit_exceeded", "column_limit_reached", "feature_not_available"
@@ -192,7 +183,7 @@ class CreateProjectsTablesColumnResponse402(TypedDict):
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateProjectsTablesColumnResponse500(TypedDict):
@@ -204,12 +195,33 @@ class CreateProjectsTablesColumnResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateProjectsTablesDuplicateRequest(TypedDict):
     name: str
     slug: str
+
+
+class CreateProjectsTablesDuplicateResponse201(TypedDict):
+    columns_json: list[CreateProjectsTablesDuplicateResponse201ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
 
 
 class CreateProjectsTablesDuplicateResponse500(TypedDict):
@@ -221,11 +233,32 @@ class CreateProjectsTablesDuplicateResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateProjectsTablesRestoreRequest(TypedDict):
     slug: NotRequired[str]
+
+
+class CreateProjectsTablesRestoreResponse200(TypedDict):
+    columns_json: list[CreateProjectsTablesRestoreResponse200ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
 
 
 class CreateProjectsTablesRestoreResponse410(TypedDict):
@@ -235,7 +268,7 @@ class CreateProjectsTablesRestoreResponse410(TypedDict):
     status: Literal[410]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateProjectsTablesRestoreResponse500(TypedDict):
@@ -247,7 +280,7 @@ class CreateProjectsTablesRestoreResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 CreateProjectsTablesRowRequest: TypeAlias = "dict[str, Any]"
@@ -274,19 +307,19 @@ class CreateProjectsTablesRowResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
-class CreateProjectsTablesRowResponse500534f56(TypedDict):
+class CreateProjectsTablesRowResponse5009205f1(TypedDict):
     error_key: Literal[
         "captcha_unavailable", "internal_server_error", "row_bulk_failed"
     ]
-    fields: dict[str, list[CreateProjectsTablesRowResponse500534f56FieldsValueItem]]
+    fields: dict[str, list[CreateProjectsTablesRowResponse5009205f1FieldsValueItem]]
     message: str
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateTableTemplateRequest(TypedDict):
@@ -300,6 +333,23 @@ class CreateTableTemplateRequest(TypedDict):
     strictness: NotRequired[Literal["strict", "balanced", "flexible"]]
 
 
+class CreateTableTemplateResponse201(TypedDict):
+    category: str
+    columns_json: list[CreateTableTemplateResponse201ColumnsJsonItem]
+    created_at: int
+    creator_display_name: str | None
+    creator_user_id: str | None
+    description: str | None
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    merge_columns_json: list[str] | None
+    name: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
+
+
 class CreateTableTemplateResponse500(TypedDict):
     error_key: Literal[
         "captcha_unavailable", "internal_server_error", "table_template_create_failed"
@@ -309,11 +359,92 @@ class CreateTableTemplateResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
-class DeleteOrganizationsWebhookResponse200(TypedDict):
+CurrencyCode: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode10: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode11: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode12: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode13: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode14: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode15: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode16: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode17: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode18: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode19: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode2: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode20: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode3: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode4: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode5: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode6: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode7: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode8: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+CurrencyCode9: TypeAlias = 'Literal["AED", "AFN", "ALL", "AMD", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UYW", "UZS", "VED", "VES", "VND", "VUV", "WST", "XAD", "XAF", "XCD", "XCG", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWG", "BTC", "ETH", "USDC", "USDT"]'
+
+
+class DeleteProjectsTableResponse200(TypedDict):
     id: str
+
+
+class DeleteProjectsTablesColumnResponse200(TypedDict):
+    columns_json: list[DeleteProjectsTablesColumnResponse200ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
 
 
 class DeleteProjectsTablesColumnResponse400(TypedDict):
@@ -325,7 +456,7 @@ class DeleteProjectsTablesColumnResponse400(TypedDict):
     status: Literal[400]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class DeleteProjectsTablesColumnResponse409(TypedDict):
@@ -335,7 +466,7 @@ class DeleteProjectsTablesColumnResponse409(TypedDict):
     status: Literal[409]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class DeleteProjectsTablesColumnResponse500(TypedDict):
@@ -347,7 +478,7 @@ class DeleteProjectsTablesColumnResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class DeleteProjectsTablesRowResponse500(TypedDict):
@@ -359,7 +490,7 @@ class DeleteProjectsTablesRowResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class DeleteTableTemplateResponse500(TypedDict):
@@ -371,7 +502,7 @@ class DeleteTableTemplateResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
@@ -388,7 +519,7 @@ class Err400BatchNotCompleteCaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
     status: Literal[400]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err400CaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
@@ -400,7 +531,7 @@ class Err400CaptchaFailedCaptchaRequiredInvalidInput(TypedDict):
     status: Literal[400]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err400CaptchaFailedCaptchaRequiredInvalidInputRowValidationFailed(TypedDict):
@@ -417,7 +548,7 @@ class Err400CaptchaFailedCaptchaRequiredInvalidInputRowValidationFailed(TypedDic
     status: Literal[400]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err401ImpersonationEndedUnauthorized(TypedDict):
@@ -427,7 +558,7 @@ class Err401ImpersonationEndedUnauthorized(TypedDict):
     status: Literal[401]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitRowPlanLimit(
@@ -451,7 +582,7 @@ class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCou
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCountPlanLimitFileSizePlanLimitTablePlanLimit(
@@ -475,7 +606,7 @@ class Err402ApiRequestLimitExceededCreditLimitExceededFeatureNotAvailableFileCou
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err402ApiRequestLimitExceededFeatureNotAvailable(TypedDict):
@@ -487,7 +618,7 @@ class Err402ApiRequestLimitExceededFeatureNotAvailable(TypedDict):
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimit(TypedDict):
@@ -504,27 +635,10 @@ class Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimit(TypedDict):
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
-class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspended(TypedDict):
-    error_key: Literal[
-        "email_not_verified", "forbidden", "impersonation_forbidden", "org_suspended"
-    ]
-    fields: dict[
-        str,
-        list[
-            Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedFieldsValueItem
-        ],
-    ]
-    message: str
-    status: Literal[403]
-    status_key: str
-    success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
-
-
-class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbidden(
+class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenTokenContextMismatch(
     TypedDict
 ):
     error_key: Literal[
@@ -533,18 +647,42 @@ class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemp
         "impersonation_forbidden",
         "org_suspended",
         "table_template_forbidden",
+        "token_context_mismatch",
     ]
     fields: dict[
         str,
         list[
-            Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenFieldsValueItem
+            Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenTokenContextMismatchFieldsValueItem
         ],
     ]
     message: str
     status: Literal[403]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
+
+
+class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTokenContextMismatch(
+    TypedDict
+):
+    error_key: Literal[
+        "email_not_verified",
+        "forbidden",
+        "impersonation_forbidden",
+        "org_suspended",
+        "token_context_mismatch",
+    ]
+    fields: dict[
+        str,
+        list[
+            Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTokenContextMismatchFieldsValueItem
+        ],
+    ]
+    message: str
+    status: Literal[403]
+    status_key: str
+    success: Literal[False]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err404BatchNotFoundBatchResultEmptyNotFound(TypedDict):
@@ -554,7 +692,7 @@ class Err404BatchNotFoundBatchResultEmptyNotFound(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err404ColumnNotFoundNotFoundTableNotFound(TypedDict):
@@ -564,7 +702,7 @@ class Err404ColumnNotFoundNotFoundTableNotFound(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err404NotFound(TypedDict):
@@ -574,7 +712,7 @@ class Err404NotFound(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err404NotFoundRowNotFoundTableNotFound(TypedDict):
@@ -584,7 +722,7 @@ class Err404NotFoundRowNotFoundTableNotFound(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err404NotFoundTableNotFound(TypedDict):
@@ -594,7 +732,7 @@ class Err404NotFoundTableNotFound(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err404NotFoundTableTemplateNotFound(TypedDict):
@@ -604,17 +742,7 @@ class Err404NotFoundTableTemplateNotFound(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
-
-
-class Err404NotFoundWebhookNotFound(TypedDict):
-    error_key: Literal["not_found", "webhook_not_found"]
-    fields: dict[str, list[Err404NotFoundWebhookNotFoundFieldsValueItem]]
-    message: str
-    status: Literal[404]
-    status_key: str
-    success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err408RequestTimeout(TypedDict):
@@ -624,7 +752,7 @@ class Err408RequestTimeout(TypedDict):
     status: Literal[408]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err409ColumnNameTakenOptimisticLockConflict(TypedDict):
@@ -634,7 +762,7 @@ class Err409ColumnNameTakenOptimisticLockConflict(TypedDict):
     status: Literal[409]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err409TableProjectIdSlugDuplicate(TypedDict):
@@ -644,7 +772,7 @@ class Err409TableProjectIdSlugDuplicate(TypedDict):
     status: Literal[409]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err410TableSoftDeleted(TypedDict):
@@ -654,7 +782,7 @@ class Err410TableSoftDeleted(TypedDict):
     status: Literal[410]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err413ContentTooLarge(TypedDict):
@@ -664,7 +792,7 @@ class Err413ContentTooLarge(TypedDict):
     status: Literal[413]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err415UnsupportedMediaType(TypedDict):
@@ -674,7 +802,7 @@ class Err415UnsupportedMediaType(TypedDict):
     status: Literal[415]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err422ExtractionUnprocessableUnprocessableEntity(TypedDict):
@@ -686,7 +814,7 @@ class Err422ExtractionUnprocessableUnprocessableEntity(TypedDict):
     status: Literal[422]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err422UnprocessableEntity(TypedDict):
@@ -696,7 +824,7 @@ class Err422UnprocessableEntity(TypedDict):
     status: Literal[422]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err429TooManyRequests(TypedDict):
@@ -706,7 +834,7 @@ class Err429TooManyRequests(TypedDict):
     status: Literal[429]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err500BatchDownloadFailedCaptchaUnavailableInternalServerError(TypedDict):
@@ -723,7 +851,7 @@ class Err500BatchDownloadFailedCaptchaUnavailableInternalServerError(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err500CaptchaUnavailableExtractionFailedInternalServerError(TypedDict):
@@ -740,7 +868,7 @@ class Err500CaptchaUnavailableExtractionFailedInternalServerError(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err500CaptchaUnavailableInternalServerError(TypedDict):
@@ -750,7 +878,7 @@ class Err500CaptchaUnavailableInternalServerError(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err500CaptchaUnavailableInternalServerErrorTableCreateFailed(TypedDict):
@@ -767,24 +895,7 @@ class Err500CaptchaUnavailableInternalServerErrorTableCreateFailed(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
-
-
-class Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailed(TypedDict):
-    error_key: Literal[
-        "captcha_unavailable", "internal_server_error", "webhook_update_failed"
-    ]
-    fields: dict[
-        str,
-        list[
-            Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailedFieldsValueItem
-        ],
-    ]
-    message: str
-    status: Literal[500]
-    status_key: str
-    success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err502BadGateway(TypedDict):
@@ -794,7 +905,7 @@ class Err502BadGateway(TypedDict):
     status: Literal[502]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err502BadGatewayEmailSendFailed(TypedDict):
@@ -804,7 +915,7 @@ class Err502BadGatewayEmailSendFailed(TypedDict):
     status: Literal[502]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err503ExtractionUnavailableServiceUnavailable(TypedDict):
@@ -816,7 +927,7 @@ class Err503ExtractionUnavailableServiceUnavailable(TypedDict):
     status: Literal[503]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err503ServiceUnavailable(TypedDict):
@@ -826,7 +937,7 @@ class Err503ServiceUnavailable(TypedDict):
     status: Literal[503]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class Err504GatewayTimeout(TypedDict):
@@ -836,21 +947,34 @@ class Err504GatewayTimeout(TypedDict):
     status: Literal[504]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
-class GetOrganizationsWebhookResponse200(TypedDict):
-    active: bool
+class GetOrganizationsProjectResponse200(TypedDict):
     created_at: int
-    events: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
-    failure_count: int
+    currency: str
+    default_insert_mode: Literal["append", "dedup", "merge", "replace"] | None
+    default_strictness: Literal["strict", "balanced", "flexible"] | None
+    deleted_at: int | None
     id: str
-    last_triggered_at: int | None
-    name: str | None
+    name: str
     organization_id: str
-    secret_rotated_at: int | None
+    retention_policy_days: int | None
+    slug: str
+    status: Literal["active", "archived"]
+    timezone: str
     updated_at: int
-    url: str
+    viewer: GetOrganizationsProjectResponse200Viewer
+
+
+class GetOrganizationsProjectResponse404(TypedDict):
+    error_key: Literal["not_found", "project_not_found"]
+    fields: dict[str, list[GetOrganizationsProjectResponse404FieldsValueItem]]
+    message: str
+    status: Literal[404]
+    status_key: str
+    success: Literal[False]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class GetProjectsBatcheResponse200(TypedDict):
@@ -886,7 +1010,7 @@ class GetProjectsBatcheResponse404(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class GetProjectsExportResponse200(TypedDict):
@@ -914,7 +1038,28 @@ class GetProjectsExportResponse404(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
+
+
+class GetProjectsTableResponse200(TypedDict):
+    columns_json: list[GetProjectsTableResponse200ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
 
 
 class GetProjectsTableTemplateResponse200(TypedDict):
@@ -932,24 +1077,6 @@ class GetProjectsTableTemplateResponse200(TypedDict):
     strictness: Literal["strict", "balanced", "flexible"]
     updated_at: int
     usage_count: int
-
-
-class ListOrganizationsWebhooksDeliveriesResponse200(TypedDict):
-    count: int | None
-    deliveries: list[ListOrganizationsWebhooksDeliveriesResponse200DeliveriesItem]
-    hasMore: bool
-    limit: int
-    nextCursor: str | None
-    page: int | None
-
-
-class ListOrganizationsWebhooksResponse200(TypedDict):
-    count: int | None
-    hasMore: bool
-    limit: int
-    nextCursor: str | None
-    page: int | None
-    webhooks: list[ListOrganizationsWebhooksResponse200WebhooksItem]
 
 
 ListProjectsBatchesDownloadCsvResponse200: TypeAlias = "str"
@@ -1000,7 +1127,7 @@ class ListProjectsTablesExportResponse402(TypedDict):
     status: Literal[402]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class ListProjectsTablesExportResponse500(TypedDict):
@@ -1010,7 +1137,7 @@ class ListProjectsTablesExportResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class ListProjectsTablesResponse200(TypedDict):
@@ -1047,7 +1174,7 @@ class ListProjectsTablesRowsResponse400(TypedDict):
     status: Literal[400]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class ListProjectsTablesRowsSourceResponse404(TypedDict):
@@ -1059,11 +1186,41 @@ class ListProjectsTablesRowsSourceResponse404(TypedDict):
     status: Literal[404]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
+
+
+class ListTableTemplatesResponse200(TypedDict):
+    count: int | None
+    hasMore: bool
+    limit: int
+    nextCursor: str | None
+    page: int | None
+    templates: list[ListTableTemplatesResponse200TemplatesItem]
 
 
 class ReplaceProjectsTablesColumnRequest(TypedDict):
     order: list[str]
+
+
+class ReplaceProjectsTablesColumnResponse200(TypedDict):
+    columns_json: list[ReplaceProjectsTablesColumnResponse200ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
 
 
 class ReplaceProjectsTablesColumnResponse400(TypedDict):
@@ -1075,7 +1232,7 @@ class ReplaceProjectsTablesColumnResponse400(TypedDict):
     status: Literal[400]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class ReplaceProjectsTablesColumnResponse409(TypedDict):
@@ -1085,16 +1242,7 @@ class ReplaceProjectsTablesColumnResponse409(TypedDict):
     status: Literal[409]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
-
-
-class UpdateOrganizationsWebhookRequest(TypedDict):
-    active: NotRequired[bool]
-    events: NotRequired[
-        list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
-    ]
-    name: NotRequired[str]
-    url: NotRequired[str]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class UpdateProjectsTableRequest(TypedDict):
@@ -1107,6 +1255,27 @@ class UpdateProjectsTableRequest(TypedDict):
     strictness: NotRequired[Literal["strict", "balanced", "flexible"]]
 
 
+class UpdateProjectsTableResponse200(TypedDict):
+    columns_json: list[UpdateProjectsTableResponse200ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
+
+
 class UpdateProjectsTableResponse500(TypedDict):
     error_key: Literal[
         "captcha_unavailable", "internal_server_error", "table_update_failed"
@@ -1116,7 +1285,7 @@ class UpdateProjectsTableResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class UpdateProjectsTablesColumnRequest(TypedDict):
@@ -1143,6 +1312,27 @@ class UpdateProjectsTablesColumnRequest(TypedDict):
     ]
 
 
+class UpdateProjectsTablesColumnResponse200(TypedDict):
+    columns_json: list[UpdateProjectsTablesColumnResponse200ColumnsJsonItem]
+    created_at: int
+    data_version: int
+    default_sort: str | None
+    deleted_at: int | None
+    fts_version: int
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    last_used_at: int | None
+    merge_columns_json: list[str] | None
+    name: str
+    project_id: str
+    row_count: int
+    slug: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
+
+
 class UpdateProjectsTablesColumnResponse422(TypedDict):
     error_key: Literal["column_retype_too_large", "unprocessable_entity"]
     fields: dict[str, list[UpdateProjectsTablesColumnResponse422FieldsValueItem]]
@@ -1150,7 +1340,7 @@ class UpdateProjectsTablesColumnResponse422(TypedDict):
     status: Literal[422]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class UpdateProjectsTablesColumnResponse500(TypedDict):
@@ -1162,7 +1352,7 @@ class UpdateProjectsTablesColumnResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class UpdateProjectsTablesRowResponse500(TypedDict):
@@ -1174,7 +1364,7 @@ class UpdateProjectsTablesRowResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
+    vars: NotRequired[dict[str, float | str]]
 
 
 class UpdateTableTemplateRequest(TypedDict):
@@ -1188,6 +1378,23 @@ class UpdateTableTemplateRequest(TypedDict):
     strictness: NotRequired[Literal["strict", "balanced", "flexible"]]
 
 
+class UpdateTableTemplateResponse200(TypedDict):
+    category: str
+    columns_json: list[UpdateTableTemplateResponse200ColumnsJsonItem]
+    created_at: int
+    creator_display_name: str | None
+    creator_user_id: str | None
+    description: str | None
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    merge_columns_json: list[str] | None
+    name: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
+
+
 class UpdateTableTemplateResponse500(TypedDict):
     error_key: Literal[
         "captcha_unavailable", "internal_server_error", "table_template_update_failed"
@@ -1197,19 +1404,7 @@ class UpdateTableTemplateResponse500(TypedDict):
     status: Literal[500]
     status_key: str
     success: Literal[False]
-    vars: NotRequired[dict[str, str | float]]
-
-
-class CreateOrganizationsWebhookResponse500FieldsValueItem(TypedDict):
-    error_key: str
-    message: str
-    path: str
-
-
-class CreateOrganizationsWebhooksTestResponse500FieldsValueItem(TypedDict):
-    error_key: str
-    message: str
-    path: str
+    vars: NotRequired[dict[str, float | str]]
 
 
 class CreateProjectsExtractResponse200FilesItem(TypedDict):
@@ -1227,7 +1422,7 @@ class CreateProjectsSuggestSchemaResponse200ColumnsItem(TypedDict):
 
 
 class CreateProjectsTableRequestColumnsJsonItem(TypedDict):
-    currency_code: NotRequired[str]
+    currency_code: NotRequired[CurrencyCode2]
     default: NotRequired[Any]
     description: NotRequired[str | None]
     id: str
@@ -1253,6 +1448,31 @@ class CreateProjectsTableRequestColumnsJsonItem(TypedDict):
     ]
 
 
+class CreateProjectsTableResponse201ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode3]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
+
+
 class CreateProjectsTableResponse402FieldsValueItem(TypedDict):
     error_key: str
     message: str
@@ -1260,7 +1480,7 @@ class CreateProjectsTableResponse402FieldsValueItem(TypedDict):
 
 
 class CreateProjectsTableTemplatesUseResponse201ColumnsJsonItem(TypedDict):
-    currency_code: NotRequired[str]
+    currency_code: NotRequired[CurrencyCode15]
     default: NotRequired[Any]
     description: NotRequired[str | None]
     id: str
@@ -1290,6 +1510,31 @@ class CreateProjectsTableTemplatesUseResponse402FieldsValueItem(TypedDict):
     path: str
 
 
+class CreateProjectsTablesColumnResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode9]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
+
+
 class CreateProjectsTablesColumnResponse402FieldsValueItem(TypedDict):
     error_key: str
     message: str
@@ -1302,10 +1547,60 @@ class CreateProjectsTablesColumnResponse500FieldsValueItem(TypedDict):
     path: str
 
 
+class CreateProjectsTablesDuplicateResponse201ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode7]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
+
+
 class CreateProjectsTablesDuplicateResponse500FieldsValueItem(TypedDict):
     error_key: str
     message: str
     path: str
+
+
+class CreateProjectsTablesRestoreResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode6]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class CreateProjectsTablesRestoreResponse410FieldsValueItem(TypedDict):
@@ -1325,7 +1620,7 @@ class CreateProjectsTablesRowRequestDbbb57UpdatesItem(TypedDict):
     id: str
 
 
-class CreateProjectsTablesRowResponse500534f56FieldsValueItem(TypedDict):
+class CreateProjectsTablesRowResponse5009205f1FieldsValueItem(TypedDict):
     error_key: str
     message: str
     path: str
@@ -1338,7 +1633,7 @@ class CreateProjectsTablesRowResponse500FieldsValueItem(TypedDict):
 
 
 class CreateTableTemplateRequestColumnsJsonItem(TypedDict):
-    currency_code: NotRequired[str]
+    currency_code: NotRequired[CurrencyCode16]
     default: NotRequired[Any]
     description: NotRequired[str | None]
     id: str
@@ -1364,10 +1659,60 @@ class CreateTableTemplateRequestColumnsJsonItem(TypedDict):
     ]
 
 
+class CreateTableTemplateResponse201ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode17]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
+
+
 class CreateTableTemplateResponse500FieldsValueItem(TypedDict):
     error_key: str
     message: str
     path: str
+
+
+class DeleteProjectsTablesColumnResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode11]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class DeleteProjectsTablesColumnResponse400FieldsValueItem(TypedDict):
@@ -1458,7 +1803,7 @@ class Err402ApiRequestLimitExceededFeatureNotAvailableRowPlanLimitFieldsValueIte
     path: str
 
 
-class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedFieldsValueItem(
+class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenTokenContextMismatchFieldsValueItem(
     TypedDict
 ):
     error_key: str
@@ -1466,7 +1811,7 @@ class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedFieldsVal
     path: str
 
 
-class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTableTemplateForbiddenFieldsValueItem(
+class Err403EmailNotVerifiedForbiddenImpersonationForbiddenOrgSuspendedTokenContextMismatchFieldsValueItem(
     TypedDict
 ):
     error_key: str
@@ -1505,12 +1850,6 @@ class Err404NotFoundTableNotFoundFieldsValueItem(TypedDict):
 
 
 class Err404NotFoundTableTemplateNotFoundFieldsValueItem(TypedDict):
-    error_key: str
-    message: str
-    path: str
-
-
-class Err404NotFoundWebhookNotFoundFieldsValueItem(TypedDict):
     error_key: str
     message: str
     path: str
@@ -1600,14 +1939,6 @@ class Err500CaptchaUnavailableInternalServerErrorTableCreateFailedFieldsValueIte
     path: str
 
 
-class Err500CaptchaUnavailableInternalServerErrorWebhookUpdateFailedFieldsValueItem(
-    TypedDict
-):
-    error_key: str
-    message: str
-    path: str
-
-
 class Err502BadGatewayEmailSendFailedFieldsValueItem(TypedDict):
     error_key: str
     message: str
@@ -1666,6 +1997,145 @@ class ExtractTableStreamBody(TypedDict):
     text: NotRequired[str]
 
 
+class GetOrganizationsProjectResponse200Viewer(TypedDict):
+    permissions: list[
+        Literal[
+            "api-keys:delete",
+            "api-keys:read",
+            "api-keys:write",
+            "audit-logs:read",
+            "columns:write",
+            "content:write",
+            "domains:manage",
+            "export:read",
+            "extract:write",
+            "members:delete",
+            "members:invite",
+            "members:read",
+            "members:write",
+            "organization:delete",
+            "organization:read",
+            "organization:write",
+            "projects:delete",
+            "projects:read",
+            "projects:write",
+            "rows:delete",
+            "rows:read",
+            "rows:write",
+            "tables:delete",
+            "tables:read",
+            "tables:write",
+            "webhooks:manage",
+        ]
+    ]
+    sources: GetOrganizationsProjectResponse200ViewerSources
+
+
+class GetOrganizationsProjectResponse200ViewerSources(TypedDict):
+    api_key: NotRequired[
+        list[
+            Literal[
+                "api-keys:delete",
+                "api-keys:read",
+                "api-keys:write",
+                "audit-logs:read",
+                "columns:write",
+                "content:write",
+                "domains:manage",
+                "export:read",
+                "extract:write",
+                "members:delete",
+                "members:invite",
+                "members:read",
+                "members:write",
+                "organization:delete",
+                "organization:read",
+                "organization:write",
+                "projects:delete",
+                "projects:read",
+                "projects:write",
+                "rows:delete",
+                "rows:read",
+                "rows:write",
+                "tables:delete",
+                "tables:read",
+                "tables:write",
+                "webhooks:manage",
+            ]
+        ]
+    ]
+    org: NotRequired[
+        list[
+            Literal[
+                "api-keys:delete",
+                "api-keys:read",
+                "api-keys:write",
+                "audit-logs:read",
+                "columns:write",
+                "content:write",
+                "domains:manage",
+                "export:read",
+                "extract:write",
+                "members:delete",
+                "members:invite",
+                "members:read",
+                "members:write",
+                "organization:delete",
+                "organization:read",
+                "organization:write",
+                "projects:delete",
+                "projects:read",
+                "projects:write",
+                "rows:delete",
+                "rows:read",
+                "rows:write",
+                "tables:delete",
+                "tables:read",
+                "tables:write",
+                "webhooks:manage",
+            ]
+        ]
+    ]
+    project: NotRequired[
+        list[
+            Literal[
+                "api-keys:delete",
+                "api-keys:read",
+                "api-keys:write",
+                "audit-logs:read",
+                "columns:write",
+                "content:write",
+                "domains:manage",
+                "export:read",
+                "extract:write",
+                "members:delete",
+                "members:invite",
+                "members:read",
+                "members:write",
+                "organization:delete",
+                "organization:read",
+                "organization:write",
+                "projects:delete",
+                "projects:read",
+                "projects:write",
+                "rows:delete",
+                "rows:read",
+                "rows:write",
+                "tables:delete",
+                "tables:read",
+                "tables:write",
+                "webhooks:manage",
+            ]
+        ]
+    ]
+
+
+class GetOrganizationsProjectResponse404FieldsValueItem(TypedDict):
+    error_key: str
+    message: str
+    path: str
+
+
 class GetProjectsBatcheResponse200ExtractionsItem(TypedDict):
     batch_id: str
     confidence: float | None
@@ -1721,8 +2191,8 @@ class GetProjectsExportResponse404FieldsValueItem(TypedDict):
     path: str
 
 
-class GetProjectsTableTemplateResponse200ColumnsJsonItem(TypedDict):
-    currency_code: NotRequired[str]
+class GetProjectsTableResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode4]
     default: NotRequired[Any]
     description: NotRequired[str | None]
     id: str
@@ -1746,32 +2216,29 @@ class GetProjectsTableTemplateResponse200ColumnsJsonItem(TypedDict):
     ]
 
 
-class ListOrganizationsWebhooksDeliveriesResponse200DeliveriesItem(TypedDict):
-    attempt: int
-    created_at: int
-    delivered_at: int | None
-    event: Literal["batch.complete", "batch.failed", "batch.partial", "ping"]
-    http_status: int | None
+class GetProjectsTableTemplateResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode14]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
     id: str
-    next_retry_at: int | None
-    payload_json: str
-    response_body: str | None
-    status: Literal["pending", "success", "failed"]
-    webhook_id: str
-
-
-class ListOrganizationsWebhooksResponse200WebhooksItem(TypedDict):
-    active: bool
-    created_at: int
-    events: list[Literal["batch.complete", "batch.failed", "batch.partial", "ping"]]
-    failure_count: int
-    id: str
-    last_triggered_at: int | None
-    name: str | None
-    organization_id: str
-    secret_rotated_at: int | None
-    updated_at: int
-    url: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class ListProjectsBatchesResponse200BatchesItem(TypedDict):
@@ -1844,7 +2311,7 @@ class ListProjectsTableTemplatesResponse200TemplatesItem(TypedDict):
 
 
 class ListProjectsTableTemplatesResponse200TemplatesItemColumnsJsonItem(TypedDict):
-    currency_code: NotRequired[str]
+    currency_code: NotRequired[CurrencyCode13]
     default: NotRequired[Any]
     description: NotRequired[str | None]
     id: str
@@ -1902,7 +2369,7 @@ class ListProjectsTablesResponse200TablesItem(TypedDict):
 
 
 class ListProjectsTablesResponse200TablesItemColumnsJsonItem(TypedDict):
-    currency_code: NotRequired[str]
+    currency_code: NotRequired[CurrencyCode]
     default: NotRequired[Any]
     description: NotRequired[str | None]
     id: str
@@ -1938,6 +2405,73 @@ class ListProjectsTablesRowsSourceResponse404FieldsValueItem(TypedDict):
     path: str
 
 
+class ListTableTemplatesResponse200TemplatesItem(TypedDict):
+    category: str
+    columns_json: list[ListTableTemplatesResponse200TemplatesItemColumnsJsonItem]
+    created_at: int
+    creator_display_name: str | None
+    creator_user_id: str | None
+    description: str | None
+    id: str
+    insert_mode: Literal["append", "dedup", "merge", "replace"]
+    instruction: str | None
+    merge_columns_json: list[str] | None
+    name: str
+    strictness: Literal["strict", "balanced", "flexible"]
+    updated_at: int
+    usage_count: int
+
+
+class ListTableTemplatesResponse200TemplatesItemColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode18]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
+
+
+class ReplaceProjectsTablesColumnResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode12]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
+
+
 class ReplaceProjectsTablesColumnResponse400FieldsValueItem(TypedDict):
     error_key: str
     message: str
@@ -1955,10 +2489,60 @@ class SuggestSchemaBody(TypedDict):
     text: NotRequired[str]
 
 
+class UpdateProjectsTableResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode5]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
+
+
 class UpdateProjectsTableResponse500FieldsValueItem(TypedDict):
     error_key: str
     message: str
     path: str
+
+
+class UpdateProjectsTablesColumnResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode10]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
+    ]
 
 
 class UpdateProjectsTablesColumnResponse422FieldsValueItem(TypedDict):
@@ -1980,7 +2564,7 @@ class UpdateProjectsTablesRowResponse500FieldsValueItem(TypedDict):
 
 
 class UpdateTableTemplateRequestColumnsJsonItem(TypedDict):
-    currency_code: NotRequired[str]
+    currency_code: NotRequired[CurrencyCode19]
     default: NotRequired[Any]
     description: NotRequired[str | None]
     id: str
@@ -2003,6 +2587,31 @@ class UpdateTableTemplateRequestColumnsJsonItem(TypedDict):
             "text",
             "url",
         ]
+    ]
+
+
+class UpdateTableTemplateResponse200ColumnsJsonItem(TypedDict):
+    currency_code: NotRequired[CurrencyCode20]
+    default: NotRequired[Any]
+    description: NotRequired[str | None]
+    id: str
+    instruction: NotRequired[str | None]
+    name: str
+    options: NotRequired[list[str]]
+    required: bool
+    searchable: NotRequired[bool]
+    type: Literal[
+        "array",
+        "boolean",
+        "currency",
+        "date",
+        "email",
+        "enum",
+        "multi_select",
+        "number",
+        "string",
+        "text",
+        "url",
     ]
 
 
@@ -2059,6 +2668,7 @@ ErrorKey = StrEnum(
         "NOT_FOUND": "not_found",
         "OPTIMISTIC_LOCK_CONFLICT": "optimistic_lock_conflict",
         "ORG_SUSPENDED": "org_suspended",
+        "PROJECT_NOT_FOUND": "project_not_found",
         "REQUEST_TIMEOUT": "request_timeout",
         "ROW_BULK_FAILED": "row_bulk_failed",
         "ROW_CREATE_FAILED": "row_create_failed",
@@ -2083,13 +2693,10 @@ ErrorKey = StrEnum(
         "TABLE_TEMPLATE_NOT_FOUND": "table_template_not_found",
         "TABLE_TEMPLATE_UPDATE_FAILED": "table_template_update_failed",
         "TABLE_UPDATE_FAILED": "table_update_failed",
+        "TOKEN_CONTEXT_MISMATCH": "token_context_mismatch",
         "TOO_MANY_REQUESTS": "too_many_requests",
         "UNAUTHORIZED": "unauthorized",
         "UNPROCESSABLE_ENTITY": "unprocessable_entity",
         "UNSUPPORTED_MEDIA_TYPE": "unsupported_media_type",
-        "WEBHOOK_CREATE_FAILED": "webhook_create_failed",
-        "WEBHOOK_NOT_FOUND": "webhook_not_found",
-        "WEBHOOK_TEST_FAILED": "webhook_test_failed",
-        "WEBHOOK_UPDATE_FAILED": "webhook_update_failed",
     },
 )
